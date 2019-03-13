@@ -73,8 +73,3 @@ export class WebResult<T> {
         if (body) { this.body = body; }
     }
 }
-// todo check content type, and do .json() or .text()
-// call.headers.forEach((value, key, parent) => {
-//     console.log(key, value);
-// })
-// console.log(call.headers.get('content-type'));
