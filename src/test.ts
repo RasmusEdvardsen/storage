@@ -4,7 +4,7 @@ import {
     AnonymousCredential,
     StorageURL,
     ServiceURL,
-    Aborter
+    Aborter,
 } from '@azure/storage-blob';
 
 export async function homestorage() {
@@ -32,14 +32,14 @@ export async function homestorage() {
     const serviceURL = new ServiceURL(
         // When using AnonymousCredential, following url should include a valid SAS or support public access
         `https://storageanarae.blob.core.windows.net?sv=2018-03-28&ss=bfqt&srt=sco&sp=rwdlacup&se=2019-03-13T15:52:51Z&st=2019-03-13T07:52:51Z&spr=https&sig=vgWWvARpjudkmgkO2rJ8Fi0wtzIomVn6g8r4HkzHsYw%3D`,
-        pipeline
+        pipeline,
     );
 
     let marker;
     do {
         const listContainersResponse: any = await serviceURL.listContainersSegment(
             Aborter.none,
-            marker
+            marker,
         );
 
         marker = listContainersResponse.nextMarker;

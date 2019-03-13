@@ -17,7 +17,7 @@ export default class App extends Vue {
   public async mounted() {
     homestorage();
   }
-  
+
 }
 </script>
 
