@@ -1,21 +1,23 @@
-export async function get(url: string): Promise<WebResult> {
+// consider parsing in type T, and then return type T in webresult.
+
+export async function get<T>(url: string): Promise<WebResult<T>> {
     try {
         const call = await fetch(url);
-        if (!call.ok) { return new WebResult(call.status, call.statusText); }
+        if (!call.ok) { return new WebResult<T>(call.status, undefined, call.statusText); }
 
-        const json = await call.text();
+        const json = await call.json() as T;
 
         return new WebResult(call.status, json);
     } catch (error) {
-        return new WebResult(500, 'Error occurred.');
+        return new WebResult<T>(500, undefined, 'Error occurred.');
     }
 }
 
-export async function getWithRetry(url: string): Promise<WebResult> {
+export async function getWithRetry(url: string): Promise<any> {
     return await new WebResult(500, 'not implemented');
 }
 
-export async function post(url: string, payload: any): Promise<WebResult> {
+export async function post(url: string, payload: any): Promise<any> {
     try {
         const call = await fetch(url, {
             headers: {
@@ -34,40 +36,43 @@ export async function post(url: string, payload: any): Promise<WebResult> {
     }
 }
 
-export async function postWithRetry(url: string, payload: any): Promise<WebResult> {
+export async function postWithRetry(url: string, payload: any): Promise<any> {
     return await new WebResult(500, 'not implemented');
 }
 
-export async function put(url: string, payload: any): Promise<WebResult> {
+export async function put(url: string, payload: any): Promise<any> {
     return await new WebResult(500, 'not implemented');
 }
 
-export async function puttWithRetry(url: string, payload: any): Promise<WebResult> {
+export async function putWithRetry(url: string, payload: any): Promise<any> {
     return await new WebResult(500, 'not implemented');
 }
 
-export async function remove(url: string): Promise<WebResult> {
+export async function remove(url: string): Promise<any> {
     return await new WebResult(500, 'not implemented');
 }
 
-export async function del(url: string): Promise<WebResult> {
+export async function del(url: string): Promise<any> {
     return await new WebResult(500, 'not implemented');
 }
 
-export async function delWithRetry(url: string): Promise<WebResult> {
+export async function delWithRetry(url: string): Promise<any> {
     return await new WebResult(500, 'not implemented');
 }
 
-export class WebResult {
+export class WebResult<T> {
     public statusCode: number;
-    public body?: string;
+    public statusText?: string;
 
-    constructor(statusCode: number, body?: string) {
+    public body?: T;
+
+    constructor(statusCode: number, body?: T, statusText?: string) {
         this.statusCode = statusCode;
+        if (statusText) { this.statusText = statusText; }
+
         if (body) { this.body = body; }
     }
 }
-
 // todo check content type, and do .json() or .text()
 // call.headers.forEach((value, key, parent) => {
 //     console.log(key, value);
