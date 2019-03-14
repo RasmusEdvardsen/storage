@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    hello
+    <home-storage />
   </div>
 </template>
 
@@ -8,17 +8,15 @@
 import Vue from 'vue';
 import { Component } from 'vue-property-decorator';
 
-import { get, post } from './web/web';
+/* components */
+import HomeStorage from './homestorage/homeStorage.vue';
 
-import { homestorage } from './test';
-
-@Component
-export default class App extends Vue {
-  public async mounted() {
-    homestorage();
-  }
-
-}
+@Component({
+  components: {
+    'home-storage': HomeStorage,
+  },
+})
+export default class App extends Vue {}
 </script>
 
 

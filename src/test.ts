@@ -6,11 +6,15 @@ import {
     ServiceURL,
     Aborter,
 } from '@azure/storage-blob';
+import {
+    ServiceListContainersSegmentResponse,
+    ContainerItem,
+} from '@azure/storage-blob/typings/lib/generated/lib/models';
 
-export async function homestorage() {
+export async function homestorage(): Promise<ContainerItem[] | 500> {
     const sasTokenUri = 'https://homestoragefunc.azurewebsites.net/api/SasTokenGenerator';
-    const sasCall = await get<{token: string}>(sasTokenUri);
-    if (sasCall.statusCode !== 200 || !sasCall.body) { return; }
+    const sasCall = await get<{ token: string }>(sasTokenUri);
+    if (sasCall.statusCode !== 200 || !sasCall.body) { return 500; }
     // Use AnonymousCredential when url already includes a SAS signature
     const anonymousCredential = new AnonymousCredential();
 
@@ -24,16 +28,18 @@ export async function homestorage() {
         pipeline,
     );
 
-    let marker;
+    const containers: ContainerItem[] = [];
+    let marker: string = '';
     do {
-        const listContainersResponse: any = await serviceURL.listContainersSegment(
+        const listContainersResponse: ServiceListContainersSegmentResponse = await serviceURL.listContainersSegment(
             Aborter.none,
             marker,
         );
 
         marker = listContainersResponse.nextMarker;
-        for (const container of listContainersResponse.containerItems) {
-            // console.log(`Container: ${container.name}`);
+        for (const container of (listContainersResponse.containerItems as ContainerItem[])) {
+            containers.push(container);
         }
     } while (marker);
+    return containers;
 }
