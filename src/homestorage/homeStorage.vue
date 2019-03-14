@@ -30,6 +30,7 @@ export default class HomeStorage extends Vue {
 
 <style scoped>
 .v-treeview {
+  text-align: start;
   max-height: 800px;
   overflow-y: auto;
 }
