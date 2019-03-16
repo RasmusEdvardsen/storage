@@ -9,5 +9,5 @@ export const getters: GetterTree<HomeStorageState, RootState> = {
     },
     blobsByContainer(state): IBlobsByContainer {
         return state.blobsByContainer;
-    }
+    },
 };

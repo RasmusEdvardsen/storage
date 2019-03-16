@@ -10,10 +10,10 @@ import getBlobsByContainer from '@/sas/getBlobsByContainer';
 export const actions: ActionTree<HomeStorageState, RootState> = {
     async getContainers({commit}): Promise<number> {
         try {
-            let token: string | number = await getSasToken();
-            if (typeof(token) === 'number') return token;
-            
-            let containers = await getContainers(token);
+            const token: string | number = await getSasToken();
+            if (typeof(token) === 'number') { return token; }
+
+            const containers = await getContainers(token);
             commit('containersLoaded', containers);
 
             return 200;
@@ -23,18 +23,18 @@ export const actions: ActionTree<HomeStorageState, RootState> = {
     },
     async getBlobsByContainer({commit}, containerName): Promise<number> {
         try {
-            let token: string | number = await getSasToken();
-            if (typeof(token) === 'number') return token;
-            
-            let blobs: IBlobsByContainer = {
-                containerName: containerName,
-                blobs: await getBlobsByContainer(token, containerName)
+            const token: string | number = await getSasToken();
+            if (typeof(token) === 'number') { return token; }
+
+            const blobs: IBlobsByContainer = {
+                containerName,
+                blobs: await getBlobsByContainer(token, containerName),
             };
-            commit('blobsByContainerLoaded', blobs)
+            commit('blobsByContainerLoaded', blobs);
 
             return 200;
         } catch (error) {
             return 500;
         }
-    }
+    },
 };

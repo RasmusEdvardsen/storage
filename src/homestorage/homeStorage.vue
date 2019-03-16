@@ -14,35 +14,53 @@ import { Action, Getter } from 'vuex-class';
 import { ContainerItem } from '@azure/storage-blob/typings/lib/generated/lib/models';
 import { IBlobsByContainer } from '@/homestorage/module/homeStorageState';
 
-import { homestorage } from '../test';
+import IFolderStructure from './models/IFolderStructure';
+
+import { treeStructure } from './utils/treeStructure';
 
 const namespace = 'homeStorage';
 
 @Component
 export default class HomeStorage extends Vue {
   @Action('getContainers', { namespace })
-  getContainers: any;
+  public getContainers: any;
 
   @Action('getBlobsByContainer', { namespace })
-  getBlobsByContainer: any;
+  public getBlobsByContainer: any;
 
   @Getter('containers', { namespace })
-  containers!: ContainerItem[];
+  public containers!: ContainerItem[];
 
   @Getter('blobsByContainer', { namespace })
-  blobsByContainer!: IBlobsByContainer;
+  public blobsByContainer!: IBlobsByContainer;
 
   public async mounted() {
     await this.getContainers();
     this.getBlobsByContainer('homestorage');
-    this.stringsToFolderStructureRec(this.blobsByContainer.blobs.map(b => b.name));
+    const strs: string[] = this.blobsByContainer.blobs.map((b) => b.name);
+    treeStructure(strs);
   }
 
-  stringsToFolderStructureRec(strs: string[]) {
-    let blobPathsArrs: string[][] = strs.map(str => str.split('/'))
-    console.log(blobPathsArrs);
-    
-  }
+  // public rec(strs: string[]): IFolderStructure[] {
+  //   let folders = strs.reduce((acc, curr) => {
+  //     if (typeof(curr) !== 'string') return curr;
+
+  //     let split = curr.split('/');
+  //     let folderStructure: IFolderStructure = {
+  //         id: split[0],
+  //         name: split[0],
+  //         children: [split.slice(1).join('/')]
+  //     }
+
+  //     let existing = acc.find(c => c.name === folderStructure.name);
+  //     if (!existing) acc.push(folderStructure);
+  //     else (existing.children as string[]).push(split.slice(1).join('/'));
+
+  //     return acc;
+  //   }, Array<IFolderStructure>())
+
+  //   return folders;
+  // }
 }
 </script>
 

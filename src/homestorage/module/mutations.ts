@@ -9,5 +9,5 @@ export const mutations: MutationTree<HomeStorageState> = {
     },
     blobsByContainerLoaded(state, blobs: IBlobsByContainer) {
         state.blobsByContainer = blobs;
-    }
+    },
 };

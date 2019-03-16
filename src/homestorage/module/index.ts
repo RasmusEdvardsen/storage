@@ -9,7 +9,7 @@ const namespaced: boolean = true;
 
 export const state: HomeStorageState = {
   containers: [],
-  blobsByContainer: { containerName: '', blobs: [] }
+  blobsByContainer: { containerName: '', blobs: [] },
 };
 
 export const homeStorage: Module<HomeStorageState, RootState> = {
@@ -17,5 +17,5 @@ export const homeStorage: Module<HomeStorageState, RootState> = {
   state,
   getters,
   actions,
-  mutations
+  mutations,
 };

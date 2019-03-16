@@ -12,16 +12,16 @@ import {
 } from '@azure/storage-blob/typings/lib/generated/lib/models';
 
 export default async function getBlobsByContainer(token: string, containerName: string): Promise<BlobItem[]> {
-    let blobItems: BlobItem[] = [];
+    const blobItems: BlobItem[] = [];
     try {
         const anonymousCredential = new AnonymousCredential();
         const pipeline = StorageURL.newPipeline(anonymousCredential);
-    
+
         const serviceURL = new ServiceURL(
             `https://storageanarae.blob.core.windows.net${token}`,
             pipeline,
         );
-    
+
         const containerURL = ContainerURL.fromServiceURL(serviceURL, containerName);
 
 
@@ -29,15 +29,15 @@ export default async function getBlobsByContainer(token: string, containerName: 
         do {
             const listBlobsResponse = await containerURL.listBlobFlatSegment(
             Aborter.none,
-            marker
+            marker,
             );
-        
+
             marker = listBlobsResponse.nextMarker;
             for (const blob of listBlobsResponse.segment.blobItems) {
                 blobItems.push(blob);
             }
         } while (marker);
-    
+
         return blobItems;
     } catch (error) {
         return blobItems;
