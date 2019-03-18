@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@azure/storage-blob": "^10.3.0",
+    "css-loader": "^2.1.1",
     "vue": "^2.6.6",
     "vue-class-component": "^6.0.0",
     "vue-property-decorator": "^7.0.0",
