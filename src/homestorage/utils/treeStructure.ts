@@ -3,22 +3,26 @@ export function treeStructure(paths: string[]) {
         if (curr.indexOf('/') !== -1) {
             let pathArr = curr.split('/')
             let firstPath = pathArr[0];
-            if (Object.keys(acc).includes(firstPath)) {
-                acc[firstPath].children.push(pathArr.slice(1).join('/'))
+            if (acc.find(c => c.id === firstPath)) {
+                acc.find(c => c.id === firstPath).children.push(pathArr.slice(1).join('/'))
             } else {
-                acc[firstPath] = {
+                acc.push({
                     id: firstPath,
                     name: firstPath,
                     children: [
                         pathArr.slice(1).join('/')
                     ]
-                }
+                })
             }
         } else if (curr.indexOf('.') !== -1) {
-            acc['files'] = curr;
+            acc.push({
+                id: curr,
+                name: curr,
+                children: []
+            });
         }
         return acc;
-    }, {});
+    }, []);
     for (const key in filtered) {
         if (filtered.hasOwnProperty(key)) {
             const child = filtered[key];

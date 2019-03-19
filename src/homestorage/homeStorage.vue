@@ -74,6 +74,7 @@ export default class HomeStorage extends Vue {
     this.getBlobsByContainer('homestorage');
     const strs: string[] = this.blobsByContainer.blobs.map((b) => b.name);
     let test = treeStructure(strs)
+    this.tree = test;
     console.log(test);
   }
 }
