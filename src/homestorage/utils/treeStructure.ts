@@ -1,13 +1,4 @@
-// takes in children of root objcet.
-
-//  for each path
-    //  split on /
-    //  concat on top-level path
-    //  for each concat paths
-        //  rec(paths)
-
 export function treeStructure(paths: string[]) {
-    console.log(paths);
     const filtered: any = paths.reduce((acc: any, curr: string) => {
         if (curr.indexOf('/') !== -1) {
             let pathArr = curr.split('/')
@@ -24,7 +15,7 @@ export function treeStructure(paths: string[]) {
                 }
             }
         } else if (curr.indexOf('.') !== -1) {
-            acc['asd'] = curr;
+            acc['files'] = curr;
         }
         return acc;
     }, {});
@@ -36,7 +27,5 @@ export function treeStructure(paths: string[]) {
             }
         }
     }
-    console.log(filtered);
     return filtered;
-    // console.log(filtered);
 }
