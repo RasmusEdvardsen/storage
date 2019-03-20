@@ -1,7 +1,7 @@
 import { GetterTree } from 'vuex';
 import RootState from '../../store/rootState';
 import HomeStorageState, { IBlobsByContainer } from './homeStorageState';
-import { ContainerItem } from '@azure/storage-blob/typings/lib/generated/lib/models';
+import { ContainerItem, BlobItem } from '@azure/storage-blob/typings/lib/generated/lib/models';
 
 export const getters: GetterTree<HomeStorageState, RootState> = {
     containers(state): ContainerItem[] {
@@ -10,4 +10,7 @@ export const getters: GetterTree<HomeStorageState, RootState> = {
     blobsByContainer(state): IBlobsByContainer {
         return state.blobsByContainer;
     },
+    blobByName: (state) => (blobName: string): BlobItem | undefined => {
+        return state.blobsByContainer.blobs.find(b => b.name === blobName);
+    }
 };

@@ -11,38 +11,26 @@
           active-class="primary--text"
           class="grey lighten-5"
           open-on-click
-          transition
-        ></v-treeview>
+          transition />
       </v-flex>
       <v-flex d-flex text-xs-center>
         <v-scroll-y-transition mode="out-in">
-          {{selected}}
-          <!-- <div
+          <div
             v-if="!selected"
             class="title grey--text text--lighten-1 font-weight-light"
             style="align-self: center;"
-          >Select a User</div>
-          <v-card v-else :key="selected.id" class="pt-4 mx-auto" flat max-width="400">
+          >Select a file</div>
+          <v-card v-else :key="selected.node.id" class="pt-4 mx-auto" flat max-width="400">
             <v-card-text>
-              <v-avatar v-if="avatar" size="88">
-                <v-img :src="`https://avataaars.io/${avatar}`" class="mb-4"></v-img>
-              </v-avatar>
-              <h3 class="headline mb-2">{{ selected.name }}</h3>
-              <div class="blue--text mb-2">{{ selected.email }}</div>
-              <div class="blue--text subheading font-weight-bold">{{ selected.username }}</div>
+              <h3 class="headline mb-2 blue--text">{{ selected.node.name }}</h3>
+              <div class="subheading">{{ selected.blob.properties.contentType }}</div>
             </v-card-text>
-            <v-divider></v-divider>
-            <v-layout tag="v-card-text" text-xs-left wrap>
-              <v-flex tag="strong" xs5 text-xs-right mr-3 mb-2>Company:</v-flex>
-              <v-flex>{{ selected.company.name }}</v-flex>
-              <v-flex tag="strong" xs5 text-xs-right mr-3 mb-2>Website:</v-flex>
+            <v-layout tag="v-card-text">
               <v-flex>
-                <a :href="`//${selected.website}`" target="_blank">{{ selected.website }}</a>
+                <div :class="[loading ? 'lds-dual-ring' : '']"></div>
               </v-flex>
-              <v-flex tag="strong" xs5 text-xs-right mr-3 mb-2>Phone:</v-flex>
-              <v-flex>{{ selected.phone }}</v-flex>
             </v-layout>
-          </v-card>-->
+          </v-card>
         </v-scroll-y-transition>
       </v-flex>
     </v-layout>
@@ -55,7 +43,7 @@ import { Component, Watch } from "vue-property-decorator";
 import { Action, Getter } from "vuex-class";
 
 /* azure storage */
-import { ContainerItem } from "@azure/storage-blob/typings/lib/generated/lib/models";
+import { ContainerItem, BlobItem } from "@azure/storage-blob/typings/lib/generated/lib/models";
 import { IBlobsByContainer } from "@/homestorage/module/homeStorageState";
 
 import IFolderStructure from "./models/IFolderStructure";
@@ -79,8 +67,12 @@ export default class HomeStorage extends Vue {
   @Getter("blobsByContainer", { namespace })
   public blobsByContainer!: IBlobsByContainer;
 
+  @Getter("blobByName", { namespace })
+  public blobByName!: any;
+
   public active: string[] = [];
   public open: string[] = [];
+  public loading: boolean = true;
 
   public async mounted() {
     await this.getContainers();
@@ -98,10 +90,10 @@ export default class HomeStorage extends Vue {
 
   get selected() {
     if (this.active.length < 1) return undefined;
-    const id = this.active[0];
+    let id = this.active[0];
     let node = findInTree(this.tree, id);
-    console.log(node);
-    return node;
+    let blob = this.blobByName(node.fullPath)
+    return {node, blob};
   }
 }
 </script>
@@ -110,13 +102,13 @@ export default class HomeStorage extends Vue {
 <style scoped>
 .v-treeview {
   text-align: start;
-  max-height: 800px;
   overflow-y: auto;
+  padding-bottom: 10px;
 }
 .v-treeview >>> .primary--text {
   color: white;
   background-color: #3f51b5;
-  
+
   border-radius: 20px;
   padding-right: 10px;
 
