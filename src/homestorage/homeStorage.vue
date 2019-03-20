@@ -34,48 +34,16 @@ export default class HomeStorage extends Vue {
   @Getter('blobsByContainer', { namespace })
   public blobsByContainer!: IBlobsByContainer;
 
-  public tree = [
-    {
-      id: 'one',
-      name: 'one',
-      children: [
-        {
-          id: 'two',
-          name: 'two',
-          children: [],
-        },
-        {
-          id: '77',
-          name: '77',
-          children: [],
-        },
-      ],
-    },
-    {
-      id: '3',
-      name: '3',
-      children: [
-        {
-          id: '4',
-          name: '4',
-          children: [],
-        },
-        {
-          id: '66',
-          name: '66',
-          children: [{}],
-        },
-      ],
-    },
-  ];
-
   public async mounted() {
     await this.getContainers();
     this.getBlobsByContainer('homestorage');
+  }
+
+  get tree(): any[] {
+    if (this.blobsByContainer.blobs.length < 1) { return []; }
     const strs: string[] = this.blobsByContainer.blobs.map((b) => b.name);
-    const test = treeStructure(strs);
-    this.tree = test;
-    // console.log(test);
+    const tree = treeStructure(strs);
+    return tree;
   }
 }
 </script>
