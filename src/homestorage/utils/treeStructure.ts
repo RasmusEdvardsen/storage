@@ -1,4 +1,4 @@
-export function treeStructure(paths: string[]) {
+export function pathStringsToTreeStructure(paths: string[]) {
     const filtered: any = paths.reduce((acc: any, curr: string) => {
         if (curr.indexOf('/') !== -1) {
             const pathArr = curr.split('/');
@@ -27,7 +27,7 @@ export function treeStructure(paths: string[]) {
         if (filtered.hasOwnProperty(key)) {
             const child = filtered[key];
             if (Object.keys(child).includes('children')) {
-                child.children = treeStructure(child.children);
+                child.children = pathStringsToTreeStructure(child.children);
             }
         }
     }

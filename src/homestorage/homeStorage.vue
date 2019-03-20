@@ -16,7 +16,7 @@ import { IBlobsByContainer } from '@/homestorage/module/homeStorageState';
 
 import IFolderStructure from './models/IFolderStructure';
 
-import { treeStructure } from './utils/treeStructure';
+import { pathStringsToTreeStructure } from './utils/treeStructure';
 
 const namespace = 'homeStorage';
 
@@ -42,7 +42,7 @@ export default class HomeStorage extends Vue {
   get tree(): any[] {
     if (this.blobsByContainer.blobs.length < 1) { return []; }
     const strs: string[] = this.blobsByContainer.blobs.map((b) => b.name);
-    const tree = treeStructure(strs);
+    const tree = pathStringsToTreeStructure(strs);
     return tree;
   }
 }
