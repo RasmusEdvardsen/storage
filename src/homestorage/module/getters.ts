@@ -11,6 +11,6 @@ export const getters: GetterTree<HomeStorageState, RootState> = {
         return state.blobsByContainer;
     },
     blobByName: (state) => (blobName: string): BlobItem | undefined => {
-        return state.blobsByContainer.blobs.find(b => b.name === blobName);
-    }
+        return state.blobsByContainer.blobs.find((b) => b.name === blobName);
+    },
 };

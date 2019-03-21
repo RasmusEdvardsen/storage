@@ -11,7 +11,7 @@ export function pathStringsToTreeStructure(paths: string[], parentFullPath: stri
                 acc.push({
                     id: uuid.v4(),
                     name: firstPath,
-                    fullPath: parentFullPath.length > 0 ? (parentFullPath + "/" + firstPath) : firstPath,
+                    fullPath: parentFullPath.length > 0 ? (parentFullPath + '/' + firstPath) : firstPath,
                     children: [
                         pathArr.slice(1).join('/'),
                     ],
@@ -21,7 +21,7 @@ export function pathStringsToTreeStructure(paths: string[], parentFullPath: stri
             acc.push({
                 id: uuid.v4(),
                 name: curr,
-                fullPath: parentFullPath.length > 0 ? (parentFullPath + "/" + curr) : curr,
+                fullPath: parentFullPath.length > 0 ? (parentFullPath + '/' + curr) : curr,
             });
         }
         return acc;
@@ -40,10 +40,10 @@ export function pathStringsToTreeStructure(paths: string[], parentFullPath: stri
 export function findInTree(tree: any[], id: string): any {
     for (let idx = 0; idx < tree.length; idx++) {
       const node = tree[idx];
-      if (node.id === id) return node;
-      else if (Object.keys(node).includes("children")) {
-        let found = findInTree(node.children, id);
-        if (found) return found;
+      if (node.id === id) { return node; }
+      else if (Object.keys(node).includes('children')) {
+        const found = findInTree(node.children, id);
+        if (found) { return found; }
       }
     }
   }
