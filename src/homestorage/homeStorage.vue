@@ -11,7 +11,8 @@
           active-class="primary--text"
           class="grey lighten-5"
           open-on-click
-          transition />
+          transition
+        />
       </v-flex>
       <v-flex d-flex text-xs-center>
         <v-scroll-y-transition mode="out-in">
@@ -27,7 +28,16 @@
             </v-card-text>
             <v-layout tag="v-card-text">
               <v-flex>
-                <div :class="[loading ? 'lds-dual-ring' : '']"></div>
+                <div v-if="loading" class="loading"></div>
+                <v-container fluid v-else-if="!loading && viewUrl.length > 0">
+                  <v-layout justify-space-around>
+                      <v-layout column>
+                        <v-img
+                          :src="viewUrl" 
+                        ></v-img>
+                      </v-layout>
+                  </v-layout>
+                </v-container>
               </v-flex>
             </v-layout>
           </v-card>
@@ -43,13 +53,17 @@ import { Component, Watch } from "vue-property-decorator";
 import { Action, Getter } from "vuex-class";
 
 /* azure storage */
-import { ContainerItem, BlobItem } from "@azure/storage-blob/typings/lib/generated/lib/models";
+import {
+  ContainerItem,
+  BlobItem
+} from "@azure/storage-blob/typings/lib/generated/lib/models";
 import { IBlobsByContainer } from "@/homestorage/module/homeStorageState";
 
-import IFolderStructure from "./models/IFolderStructure";
-
 /* tree */
-import { pathStringsToTreeStructure, findInTree } from './utils/treeUtils';
+import { pathStringsToTreeStructure, findInTree } from "./utils/treeUtils";
+
+/* sas */
+import getSasToken from "@/sas/getSasToken";
 
 const namespace = "homeStorage";
 
@@ -72,7 +86,9 @@ export default class HomeStorage extends Vue {
 
   public active: string[] = [];
   public open: string[] = [];
-  public loading: boolean = true;
+
+  public loading: boolean = false;
+  public viewUrl: string = "";
 
   public async mounted() {
     await this.getContainers();
@@ -92,8 +108,22 @@ export default class HomeStorage extends Vue {
     if (this.active.length < 1) return undefined;
     let id = this.active[0];
     let node = findInTree(this.tree, id);
-    let blob = this.blobByName(node.fullPath)
-    return {node, blob};
+    let blob = this.blobByName(node.fullPath);
+    this.handlePreview(blob);
+
+    return { node, blob };
+  }
+
+  async handlePreview(blob: any) {
+    this.loading = true;
+    let blobStorageUrl =
+      "https://storageanarae.blob.core.windows.net/homestorage";
+    let namePath = "/" + blob.name;
+    let token = await getSasToken();
+    let viewUrl = blobStorageUrl + namePath + token;
+    this.viewUrl = viewUrl;
+    console.log(viewUrl);
+    this.loading = false;
   }
 }
 </script>

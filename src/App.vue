@@ -31,6 +31,7 @@ export default class App extends Vue {}
 
 #home-storage {
   margin: 10px;
+  min-width: 600px;
 }
 
 /* spinner */
