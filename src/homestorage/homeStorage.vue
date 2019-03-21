@@ -110,12 +110,12 @@ export default class HomeStorage extends Vue {
     const id = this.active[0];
     const node = findInTree(this.tree, id);
     const blob = this.blobByName(node.fullPath);
-    this.handlePreview(blob);
+    this.handlePreview(blob, node);
 
     return { node, blob };
   }
 
-  public async handlePreview(blob: any) {
+  public async handlePreview(blob: any, node: any) {
     this.loading = true;
     const blobStorageUrl =
       'https://storageanarae.blob.core.windows.net/homestorage';
@@ -123,7 +123,7 @@ export default class HomeStorage extends Vue {
     const token = await getSasToken();
     const viewUrl = blobStorageUrl + namePath + token;
     this.viewUrl = viewUrl;
-    if (typeof(token) === 'string') { downloadBlob(token, 'homestorage', blob.name); }
+    if (typeof(token) === 'string') { downloadBlob(token, 'homestorage', blob.name, node.name); }
     this.loading = false;
   }
 }
