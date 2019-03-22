@@ -63,8 +63,8 @@ import { IBlobsByContainer } from '@/homestorage/module/homeStorageState';
 import { pathStringsToTreeStructure, findInTree } from './utils/treeUtils';
 
 /* sas */
-import getSasToken from '@/sas/getSasToken';
-import downloadBlob from '@/sas/downloadBlob';
+import getSasToken from '@/azure/getSasToken';
+import downloadBlob from '@/azure/downloadBlob';
 
 const namespace = 'homeStorage';
 

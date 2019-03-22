@@ -38,11 +38,9 @@ export function pathStringsToTreeStructure(paths: string[], parentFullPath: stri
 }
 
 export function findInTree(tree: any[], id: string): any {
-    for (let idx = 0; idx < tree.length; idx++) {
-      const node = tree[idx];
-      if (node.id === id) { return node; }
-      else if (Object.keys(node).includes('children')) {
-        const found = findInTree(node.children, id);
+    for (const iterator of tree) {
+      if (iterator.id === id) { return iterator; } else if (Object.keys(iterator).includes('children')) {
+        const found = findInTree(iterator.children, id);
         if (found) { return found; }
       }
     }
