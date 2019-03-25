@@ -1,56 +1,18 @@
 <template>
-  <v-card id="home-storage">
-    <v-card-title class="indigo white--text headline">User Directory</v-card-title>
-    <v-layout justify-space-between pa-3>
-      <v-flex xs5>
-        <v-treeview
-          :active.sync="active"
-          :items="tree"
-          :open.sync="open"
-          activatable
-          active-class="primary--text"
-          class="grey lighten-5"
-          open-on-click
-          transition
-        />
-      </v-flex>
-      <v-flex d-flex text-xs-center>
-        <v-scroll-y-transition mode="out-in">
-          <div
-            v-if="!selected"
-            class="title grey--text text--lighten-1 font-weight-light"
-            style="align-self: center;"
-          >Select a file</div>
-          <v-card v-else :key="selected.node.id" class="pt-4 mx-auto" flat max-width="400">
-            <v-card-text>
-              <h3 class="headline mb-2 blue--text">{{ selected.node.name }}</h3>
-              <div class="subheading">{{ selected.blob.properties.contentType }}</div>
-            </v-card-text>
-            <v-layout tag="v-card-text">
-              <v-flex>
-                <div v-if="loading" class="loading"></div>
-                <v-container fluid v-else-if="!loading && viewUrl.length > 0">
-                  <v-layout justify-space-around>
-                      <v-layout column>
-                        <v-img
-                          :src="viewUrl" 
-                        ></v-img>
-                      </v-layout>
-                  </v-layout>
-                </v-container>
-              </v-flex>
-            </v-layout>
-          </v-card>
-        </v-scroll-y-transition>
-      </v-flex>
-    </v-layout>
-  </v-card>
+  <div id="home-storage">
+    <ul id="trees-wrapper">
+      <tree-item class="item" :item="tree" @make-folder="makeFolder" @add-item="addItem"/>
+    </ul>
+  </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
 import { Component, Watch } from 'vue-property-decorator';
 import { Action, Getter } from 'vuex-class';
+
+/* components */
+import TreeItem from './components/treeItem.vue';
 
 /* azure storage */
 import {
@@ -68,7 +30,11 @@ import downloadBlob from '@/azure/downloadBlob';
 
 const namespace = 'homeStorage';
 
-@Component
+@Component({
+  components: {
+    'tree-item': TreeItem,
+  },
+})
 export default class HomeStorage extends Vue {
   @Action('getContainers', { namespace })
   public getContainers: any;
@@ -91,22 +57,19 @@ export default class HomeStorage extends Vue {
   public loading: boolean = false;
   public viewUrl: string = '';
 
+  public tree: any = {};
+
   public async mounted() {
     await this.getContainers();
     this.getBlobsByContainer('homestorage');
   }
 
-  get tree(): any[] {
-    if (this.blobsByContainer.blobs.length < 1) {
-      return [];
-    }
-    const strs: string[] = this.blobsByContainer.blobs.map((b) => b.name);
-    const tree = pathStringsToTreeStructure(strs);
-    return tree;
-  }
+  // get tree(): any {}
 
   get selected() {
-    if (this.active.length < 1) { return undefined; }
+    if (this.active.length < 1) {
+      return undefined;
+    }
     const id = this.active[0];
     const node = findInTree(this.tree, id);
     const blob = this.blobByName(node.fullPath);
@@ -115,15 +78,51 @@ export default class HomeStorage extends Vue {
     return { node, blob };
   }
 
+  @Watch('blobsByContainer', { deep: true })
+  public onBlobsByContainerChanged(value: any, oldValue: any) {
+    if (value.blobs.length < 1) {
+      this.tree = {};
+    }
+    const strs: string[] = value.blobs.map((b: any) => b.name);
+    const tree = pathStringsToTreeStructure(strs);
+    this.tree = {
+      name: 'homestorage',
+      children: tree,
+    };
+  }
+
+  public makeFolder(item: any) {
+    Vue.set(item, 'children', []);
+    this.addItem(item);
+  }
+
+  public addItem(item: any) {
+    item.children.push({
+      name: 'new stuff',
+    });
+  }
+
+  public async download(blob: BlobItem, node: any): Promise<void> {
+    if (!blob) {
+      return;
+    }
+
+    const token = await getSasToken();
+    if (typeof token !== 'string') {
+      return;
+    }
+
+    downloadBlob(token, 'homestorage', blob.name, node.name);
+  }
+
   public async handlePreview(blob: any, node: any) {
     this.loading = true;
     const blobStorageUrl =
       'https://storageanarae.blob.core.windows.net/homestorage';
     const namePath = '/' + blob.name;
     const token = await getSasToken();
-    const viewUrl = blobStorageUrl + namePath + token;
-    this.viewUrl = viewUrl;
-    if (typeof(token) === 'string') { downloadBlob(token, 'homestorage', blob.name, node.name); }
+    this.viewUrl = blobStorageUrl + namePath + token;
+    // if (typeof(token) === 'string') { downloadBlob(token, 'homestorage', blob.name, node.name); }
     this.loading = false;
   }
 }
@@ -131,26 +130,16 @@ export default class HomeStorage extends Vue {
 
 
 <style scoped>
-.v-treeview {
-  text-align: start;
-  overflow-y: auto;
-  padding-bottom: 10px;
-}
-.v-treeview >>> .primary--text {
-  color: white;
-  background-color: #3f51b5;
-
+#home-storage {
+  width: 1200px;
   border-radius: 20px;
-  padding-right: 10px;
-
-  width: intrinsic; /* Safari/WebKit uses a non-standard name */
-  width: -moz-max-content; /* Firefox/Gecko */
-  width: -webkit-max-content; /* Chrome */
+  background-color: lavender;
+  border: 2px solid cornflowerblue;
 }
-.v-treeview >>> .v-treeview-node__label {
-  margin-left: 10px;
+#home-storage * {
+  width: fit-content;
 }
-.v-card {
-  width: calc(60%);
+#trees-wrapper >>> .fit {
+  width: fit-content;
 }
 </style>

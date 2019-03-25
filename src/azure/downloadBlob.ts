@@ -26,5 +26,5 @@ export default async function downloadBlob(
     const blobURL = BlobURL.fromContainerURL(containerURL, blobNameFull);
     const downloadBlockBlobResponse = await blobURL.download(Aborter.none, 0);
     const blobBody = await downloadBlockBlobResponse.blobBody;
-    // if (blobBody) { FileSaver.saveAs(blobBody, blobName); }
+    if (blobBody) { FileSaver.saveAs(blobBody, blobName); }
 }

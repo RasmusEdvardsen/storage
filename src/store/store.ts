@@ -7,7 +7,9 @@ import { homeStorage } from '../homestorage/module';
 Vue.use(Vuex);
 const storeOptions: StoreOptions<RootState> = {
     state: { version: '1.0.0' },
-    modules: { homeStorage },
+    modules: {
+        homeStorage,
+    },
 };
 const store = new Vuex.Store<RootState>(storeOptions);
 export default store;

@@ -29,10 +29,10 @@ export default class App extends Vue {}
   color: #2c3e50;
 }
 
-#home-storage {
-  margin: 10px;
-  min-width: 600px;
-}
+.mt-10 { margin-top: 10px; }
+.mr-10 { margin-right: 10px; }
+.mb-10 { margin-bottom: 10px; }
+.ml-10 { margin-left: 10px; }
 
 /* spinner */
 .lds-dual-ring {
