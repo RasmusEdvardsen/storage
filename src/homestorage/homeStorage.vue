@@ -1,12 +1,13 @@
 <template>
   <div id="home-storage">
     <ul id="trees-wrapper">
-      <tree-item class="item" :item="tree" @item-click="itemClick"/>
+      <tree-item class="item" :item="tree"/>
     </ul>
     <!-- make into preview component -->
     <div id="preview">
-      <div id="to-be-preview-component" v-if="activeBlob">
-        {{previewUrl}}
+      <div id="to-be-preview-component" v-if="activeBlob && previewUrl.length > 0">
+        title
+        contenttype downloadbutton
         <img id="viewurl" :src="previewUrl" alt>
       </div>
     </div>
@@ -44,35 +45,41 @@ const namespace = "homeStorage";
 })
 export default class HomeStorage extends Vue {
   @Action("getContainers", { namespace })
-  public getContainers: any;
+  getContainers: any;
 
   @Action("getBlobsByContainer", { namespace })
-  public getBlobsByContainer: any;
+  getBlobsByContainer: any;
 
   @Getter("containers", { namespace })
-  public containers!: ContainerItem[];
+  containers!: ContainerItem[];
 
   @Getter("blobsByContainerTree", { namespace })
-  public tree!: any;
+  tree!: any;
 
   @Getter("blobByName", { namespace })
-  public blobByName!: any;
+  blobByName!: any;
 
   @Getter("activeBlob", { namespace })
   activeBlob!: BlobItem;
 
-  public open: string[] = [];
+  previewUrl: string = "";
 
   public async mounted() {
     await this.getContainers();
     this.getBlobsByContainer("homestorage");
   }
 
-  get previewUrl(): string {
-    return 'previewUrl';
-  }
-  itemClick(item: any) {
-    console.log(item);
+  @Watch("activeBlob", { deep: true })
+  async onActiveBlobChanged(value: BlobItem | null) {
+    if (value === null) {
+      this.previewUrl = "";
+      return;
+    }
+    const blobStorageUrl =
+      "https://storageanarae.blob.core.windows.net/homestorage";
+    const namePath = "/" + value.name;
+    const token = await getSasToken();
+    this.previewUrl = blobStorageUrl + namePath + token;
   }
 
   public async download(blob: BlobItem, node: any): Promise<void> {
@@ -106,5 +113,9 @@ export default class HomeStorage extends Vue {
 }
 #to-be-preview-component {
   margin: 20px;
+}
+#to-be-preview-component > img {
+  max-width: 100%;
+  max-height: 100%;
 }
 </style>
