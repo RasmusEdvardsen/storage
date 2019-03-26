@@ -107,9 +107,8 @@ export default class HomeStorage extends Vue {
 }
 </script>
 
-
 <style scoped>
-#home-storage {
+#home-storage  {
   display: flex;
   width: 1200px;
   border-radius: 20px;
@@ -119,11 +118,8 @@ export default class HomeStorage extends Vue {
   -moz-box-shadow: 2px 2px 4px 0px rgba(0, 0, 0, 0.5);
   box-shadow: 2px 2px 4px 0px rgba(0, 0, 0, 0.5);
 }
-#home-storage * {
-  width: fit-content;
-}
-#trees-wrapper >>> .fit {
-  width: fit-content;
+#home-storage > * {
+  width: calc(50%);
 }
 #to-be-preview-component {
   margin: 20px;
@@ -131,5 +127,11 @@ export default class HomeStorage extends Vue {
 #to-be-preview-component > img {
   max-width: 100%;
   max-height: 100%;
+}
+</style>
+
+<style>
+ul, li {
+  list-style-type: none;
 }
 </style>
