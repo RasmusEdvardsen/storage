@@ -1,6 +1,6 @@
 <template>
   <li>
-    <div class="item" @click="itemClick(item)" @contextmenu="contextMenuHandler($event)">
+    <div class="item mb-5" @click="itemClick(item)" @contextmenu="contextMenuHandler($event)">
       <div :class="[icon, 'item-icon', 'mr-10', 'ml-10']"></div>
       <div class="item-name mr-10 ml-10">{{ item.name }}</div>
       <div v-if="showContextMenu" class="context-menu">this will be a dropdown</div>

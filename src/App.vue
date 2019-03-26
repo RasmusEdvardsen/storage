@@ -34,6 +34,11 @@ export default class App extends Vue {}
 .mb-10 { margin-bottom: 10px; }
 .ml-10 { margin-left: 10px; }
 
+.mt-5 { margin-top: 5px; }
+.mr-5 { margin-right: 5px; }
+.mb-5 { margin-bottom: 5px; }
+.ml-5 { margin-left: 5px; }
+
 /* spinner */
 .lds-dual-ring {
   display: inline-block;
