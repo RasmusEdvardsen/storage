@@ -12,52 +12,51 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { Component, Prop, Watch } from "vue-property-decorator";
-import { Action, Getter } from "vuex-class";
-import { BlobItem } from "@azure/storage-blob/typings/lib/generated/lib/models";
+import Vue from 'vue';
+import { Component, Prop, Watch } from 'vue-property-decorator';
+import { Action, Getter } from 'vuex-class';
+import { BlobItem } from '@azure/storage-blob/typings/lib/generated/lib/models';
 
-const namespace = "homeStorage";
+const namespace = 'homeStorage';
 
 @Component
 export default class TreeItem extends Vue {
   @Prop({ type: Object as () => {}, default: Object as () => {} })
   public item!: any;
 
-  @Action("setActiveBlob", { namespace })
+  @Action('setActiveBlob', { namespace })
   public setActiveBlob: any;
 
-  @Getter("activeBlob", { namespace })
+  @Getter('activeBlob', { namespace })
   public activeBlob!: BlobItem;
 
   public isOpen: boolean = false;
 
-  showContextMenu: boolean = false;
+  public showContextMenu: boolean = false;
 
   get isFolder(): boolean {
     return this.item.children && this.item.children.length;
   }
 
   get icon(): string {
-    let str =
-      "far " +
+    const str =
+      'far ' +
       (this.isFolder
         ? this.isOpen
-          ? "fa-folder-open"
-          : "fa-folder"
-        : " fa-file");
-    console.log(str);
+          ? 'fa-folder-open'
+          : 'fa-folder'
+        : ' fa-file');
     return str;
   }
 
-  contextMenuHandler(e: MouseEvent) {
-    if (!this.isFolder) return;
-    
+  public contextMenuHandler(e: MouseEvent) {
+    if (!this.isFolder) { return; }
+
     e.preventDefault();
     this.showContextMenu = !this.showContextMenu;
   }
 
-  itemClick(item: any) {
+  public itemClick(item: any) {
     if (this.isFolder) {
       this.isOpen = !this.isOpen;
     } else if (item.fullPath) {
