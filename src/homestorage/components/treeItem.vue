@@ -17,23 +17,23 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { Component, Prop, Watch } from "vue-property-decorator";
-import { Action, Getter } from "vuex-class";
-import { BlobItem } from "@azure/storage-blob/typings/lib/generated/lib/models";
+import Vue from 'vue';
+import { Component, Prop, Watch } from 'vue-property-decorator';
+import { Action, Getter } from 'vuex-class';
+import { BlobItem } from '@azure/storage-blob/typings/lib/generated/lib/models';
 
-const namespace = "homeStorage";
+const namespace = 'homeStorage';
 
 @Component
 export default class TreeItem extends Vue {
   @Prop({ type: Object as () => {}, default: Object as () => {} })
   public item!: any;
 
-  @Action("setActiveBlob", { namespace })
-  setActiveBlob: any;
+  @Action('setActiveBlob', { namespace })
+  public setActiveBlob: any;
 
-  @Getter("activeBlob", { namespace })
-  activeBlob!: BlobItem;
+  @Getter('activeBlob', { namespace })
+  public activeBlob!: BlobItem;
 
   public isOpen: boolean = false;
 
@@ -42,8 +42,7 @@ export default class TreeItem extends Vue {
   }
 
   public itemClick(item: any) {
-    if (this.isFolder) this.isOpen = !this.isOpen;
-    else if (item.fullPath) this.setActiveBlob(item.fullPath);
+    if (this.isFolder) { this.isOpen = !this.isOpen; } else if (item.fullPath) { this.setActiveBlob(item.fullPath); }
   }
 }
 </script>

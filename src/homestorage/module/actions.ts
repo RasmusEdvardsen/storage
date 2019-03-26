@@ -37,6 +37,6 @@ export const actions: ActionTree<HomeStorageState, RootState> = {
         }
     },
     setActiveBlob({commit}, name: string) {
-        if (name) commit('activeBlobSet', name);
-    }
+        if (name) { commit('activeBlobSet', name); }
+    },
 };

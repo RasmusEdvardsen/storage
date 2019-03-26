@@ -15,80 +15,80 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { Component, Watch } from "vue-property-decorator";
-import { Action, Getter } from "vuex-class";
+import Vue from 'vue';
+import { Component, Watch } from 'vue-property-decorator';
+import { Action, Getter } from 'vuex-class';
 
 /* components */
-import TreeItem from "./components/treeItem.vue";
+import TreeItem from './components/treeItem.vue';
 
 /* azure storage */
 import {
   ContainerItem,
-  BlobItem
-} from "@azure/storage-blob/typings/lib/generated/lib/models";
-import { IBlobsByContainer } from "@/homestorage/module/homeStorageState";
+  BlobItem,
+} from '@azure/storage-blob/typings/lib/generated/lib/models';
+import { IBlobsByContainer } from '@/homestorage/module/homeStorageState';
 
 /* tree */
-import { pathStringsToTreeStructure, findInTree } from "./utils/treeUtils";
+import { pathStringsToTreeStructure, findInTree } from './utils/treeUtils';
 
 /* sas */
-import getSasToken from "@/azure/getSasToken";
-import downloadBlob from "@/azure/downloadBlob";
+import getSasToken from '@/azure/getSasToken';
+import downloadBlob from '@/azure/downloadBlob';
 
-const namespace = "homeStorage";
+const namespace = 'homeStorage';
 
 @Component({
   components: {
-    "tree-item": TreeItem
-  }
+    'tree-item': TreeItem,
+  },
 })
 export default class HomeStorage extends Vue {
-  @Action("getContainers", { namespace })
-  getContainers: any;
+  @Action('getContainers', { namespace })
+  public getContainers: any;
 
-  @Action("getBlobsByContainer", { namespace })
-  getBlobsByContainer: any;
+  @Action('getBlobsByContainer', { namespace })
+  public getBlobsByContainer: any;
 
-  @Getter("containers", { namespace })
-  containers!: ContainerItem[];
+  @Getter('containers', { namespace })
+  public containers!: ContainerItem[];
 
-  @Getter("blobsByContainerTree", { namespace })
-  tree!: any;
+  @Getter('blobsByContainerTree', { namespace })
+  public tree!: any;
 
-  @Getter("blobByName", { namespace })
-  blobByName!: any;
+  @Getter('blobByName', { namespace })
+  public blobByName!: any;
 
-  @Getter("activeBlob", { namespace })
-  activeBlob!: BlobItem;
+  @Getter('activeBlob', { namespace })
+  public activeBlob!: BlobItem;
 
-  previewUrl: string = "";
+  public previewUrl: string = '';
 
   public async mounted() {
     await this.getContainers();
-    this.getBlobsByContainer("homestorage");
+    this.getBlobsByContainer('homestorage');
   }
 
-  @Watch("activeBlob", { deep: true })
-  async onActiveBlobChanged(value: BlobItem | null) {
+  @Watch('activeBlob', { deep: true })
+  public async onActiveBlobChanged(value: BlobItem | null) {
     if (value === null) {
-      this.previewUrl = "";
+      this.previewUrl = '';
       return;
     }
     const blobStorageUrl =
-      "https://storageanarae.blob.core.windows.net/homestorage";
-    const namePath = "/" + value.name;
+      'https://storageanarae.blob.core.windows.net/homestorage';
+    const namePath = '/' + value.name;
     const token = await getSasToken();
     this.previewUrl = blobStorageUrl + namePath + token;
   }
 
   public async download(blob: BlobItem, node: any): Promise<void> {
-    if (!blob) return;
+    if (!blob) { return; }
 
     const token = await getSasToken();
-    if (typeof token !== "string") return;
+    if (typeof token !== 'string') { return; }
 
-    downloadBlob(token, "homestorage", blob.name, node.name);
+    downloadBlob(token, 'homestorage', blob.name, node.name);
   }
 }
 </script>

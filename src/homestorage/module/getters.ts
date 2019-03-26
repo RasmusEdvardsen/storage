@@ -18,5 +18,5 @@ export const getters: GetterTree<HomeStorageState, RootState> = {
     },
     activeBlob(state): BlobItem | null {
         return state.activeBlob;
-    }
+    },
 };

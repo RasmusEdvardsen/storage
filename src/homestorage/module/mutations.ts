@@ -11,7 +11,6 @@ export const mutations: MutationTree<HomeStorageState> = {
     },
     blobsByContainerLoaded(state, blobs: IBlobsByContainer) {
         state.blobsByContainer = blobs;
-        console.log(blobs);
         if (blobs.blobs.length < 1) {
             state.blobsByContainerTree = {};
         }
@@ -19,15 +18,15 @@ export const mutations: MutationTree<HomeStorageState> = {
         const tree = pathStringsToTreeStructure(strs);
         state.blobsByContainerTree = {
             name: blobs.containerName,
-            children: tree
+            children: tree,
         };
     },
     activeBlobSet(state, name: string) {
         if (state.activeBlob && state.activeBlob.name === name) {
             state.activeBlob = null;
         } else {
-            let blob = state.blobsByContainer.blobs.find(blob => blob.name === name)
-            if (blob) state.activeBlob = blob;
+            const blob = state.blobsByContainer.blobs.find((b) => b.name === name);
+            if (blob) { state.activeBlob = blob; }
         }
-    }
+    },
 };
