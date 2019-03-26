@@ -1,6 +1,6 @@
 <template>
   <li>
-    <div class="item" @click="itemClick(item)" @contextmenu.prevent="showContextMenu=!showContextMenu;">
+    <div class="item" @click="itemClick(item)" @contextmenu="contextMenuHandler($event)">
       <div :class="[icon, 'item-icon', 'mr-10', 'ml-10']"></div>
       <div class="item-name mr-10 ml-10">{{ item.name }}</div>
       <div v-if="showContextMenu" class="context-menu">this will be a dropdown</div>
@@ -48,6 +48,13 @@ export default class TreeItem extends Vue {
         : " fa-file");
     console.log(str);
     return str;
+  }
+
+  contextMenuHandler(e: MouseEvent) {
+    if (!this.isFolder) return;
+    
+    e.preventDefault();
+    this.showContextMenu = !this.showContextMenu;
   }
 
   itemClick(item: any) {
