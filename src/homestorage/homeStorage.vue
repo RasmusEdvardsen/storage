@@ -6,8 +6,17 @@
     <!-- make into preview component -->
     <div id="preview">
       <div id="to-be-preview-component" v-if="activeBlob && previewUrl.length > 0">
-        title
-        contenttype downloadbutton
+        <div class="">
+          {{name(activeBlob.name)}}
+        </div>
+        <div class="file-info">
+          <div class="content-type">
+            {{activeBlob.properties.contentType}}
+          </div>
+          <div class="download" @click="download(activeBlob)">
+            download
+          </div>
+        </div>
         <img id="viewurl" :src="previewUrl" alt>
       </div>
     </div>
@@ -82,13 +91,18 @@ export default class HomeStorage extends Vue {
     this.previewUrl = blobStorageUrl + namePath + token;
   }
 
-  public async download(blob: BlobItem, node: any): Promise<void> {
+  public async download(blob: BlobItem): Promise<void> {
     if (!blob) { return; }
 
     const token = await getSasToken();
     if (typeof token !== 'string') { return; }
 
-    downloadBlob(token, 'homestorage', blob.name, node.name);
+    downloadBlob(token, 'homestorage', blob.name, this.name(blob.name));
+  }
+
+  public name(name: string) {
+    const strArr: string [] = name.split('/');
+    return strArr[strArr.length - 1];
   }
 }
 </script>
