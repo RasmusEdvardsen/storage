@@ -10,7 +10,13 @@ export const getters: GetterTree<HomeStorageState, RootState> = {
     blobsByContainer(state): IBlobsByContainer {
         return state.blobsByContainer;
     },
+    blobsByContainerTree(state): any {
+        return state.blobsByContainerTree;
+    },
     blobByName: (state) => (blobName: string): BlobItem | undefined => {
         return state.blobsByContainer.blobs.find((b) => b.name === blobName);
     },
+    activeBlob(state): BlobItem | null {
+        return state.activeBlob;
+    }
 };

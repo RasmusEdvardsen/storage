@@ -10,6 +10,8 @@ const namespaced: boolean = true;
 export const state: HomeStorageState = {
   containers: [],
   blobsByContainer: { containerName: '', blobs: [] },
+  blobsByContainerTree: {},
+  activeBlob: null,
 };
 
 export const homeStorage: Module<HomeStorageState, RootState> = {

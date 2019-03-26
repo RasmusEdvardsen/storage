@@ -20,7 +20,7 @@ export const actions: ActionTree<HomeStorageState, RootState> = {
             return 500;
         }
     },
-    async getBlobsByContainer({commit}, containerName): Promise<number> {
+    async getBlobsByContainer({commit}, containerName: string): Promise<number> {
         try {
             const token: string | number = await getSasToken();
             if (typeof(token) === 'number') { return token; }
@@ -36,4 +36,7 @@ export const actions: ActionTree<HomeStorageState, RootState> = {
             return 500;
         }
     },
+    setActiveBlob({commit}, name: string) {
+        if (name) commit('activeBlobSet', name);
+    }
 };

@@ -1,6 +1,6 @@
 <template>
   <li>
-    <div :class="{bold: isFolder, 'fit': true}" @click="toggle" @dblclick="makeFolder">
+    <div :class="{bold: isFolder, 'fit': true}" @click="itemClick(item)">
       {{ item.name }}
       <span v-if="isFolder">[{{ isOpen ? '-' : '+' }}]</span>
     </div>
@@ -10,22 +10,30 @@
         v-for="(child, index) in item.children"
         :key="index"
         :item="child"
-        @make-folder="$emit('make-folder', $event)"
-        @add-item="$emit('add-item', $event)"
       ></tree-item>
-      <li class="add fit" @click="$emit('add-item', item)">+</li>
+      <li class="add fit">+</li>
     </ul>
   </li>
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
-import { Component, Prop } from 'vue-property-decorator';
+import Vue from "vue";
+import { Component, Prop, Watch } from "vue-property-decorator";
+import { Action, Getter } from "vuex-class";
+import { BlobItem } from "@azure/storage-blob/typings/lib/generated/lib/models";
+
+const namespace = "homeStorage";
 
 @Component
 export default class TreeItem extends Vue {
   @Prop({ type: Object as () => {}, default: Object as () => {} })
   public item!: any;
+
+  @Action("setActiveBlob", { namespace })
+  setActiveBlob: any;
+
+  @Getter("activeBlob", { namespace })
+  activeBlob!: BlobItem;
 
   public isOpen: boolean = false;
 
@@ -33,17 +41,9 @@ export default class TreeItem extends Vue {
     return this.item.children && this.item.children.length;
   }
 
-  public toggle() {
-    if (this.isFolder) {
-      this.isOpen = !this.isOpen;
-    }
-  }
-
-  public makeFolder() {
-    if (!this.isFolder) {
-      this.$emit('make-folder', this.item);
-      this.isOpen = true;
-    }
+  public itemClick(item: any) {
+    if (this.isFolder) this.isOpen = !this.isOpen;
+    else if (item.fullPath) this.setActiveBlob(item.fullPath);
   }
 }
 </script>
