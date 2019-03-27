@@ -1,4 +1,12 @@
-import { BlobURL, BlockBlobURL, Aborter, ContainerURL, AnonymousCredential, StorageURL, ServiceURL } from '@azure/storage-blob';
+import {
+    BlobURL,
+    BlockBlobURL,
+    Aborter,
+    ContainerURL,
+    AnonymousCredential,
+    StorageURL,
+    ServiceURL,
+} from '@azure/storage-blob';
 
 export default async function createFolder(
     token: string,

@@ -25,89 +25,90 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { Component, Watch } from "vue-property-decorator";
-import { Action, Getter } from "vuex-class";
+import Vue from 'vue';
+import { Component, Watch } from 'vue-property-decorator';
+import { Action, Getter } from 'vuex-class';
 
 /* components */
-import TreeItem from "./components/treeItem.vue";
+import TreeItem from './components/treeItem.vue';
 
 /* azure storage */
 import {
   ContainerItem,
-  BlobItem
-} from "@azure/storage-blob/typings/lib/generated/lib/models";
-import { IBlobsByContainer } from "@/homestorage/module/homeStorageState";
+  BlobItem,
+} from '@azure/storage-blob/typings/lib/generated/lib/models';
+import { IBlobsByContainer } from '@/homestorage/module/homeStorageState';
 
 /* tree */
-import { pathStringsToTreeStructure, findInTree } from "./utils/treeUtils";
+import { pathStringsToTreeStructure, findInTree } from './utils/treeUtils';
 
 /* sas */
-import getSasToken from "@/azure/getSasToken";
-import downloadBlob from "@/azure/downloadBlob";
+import getSasToken from '@/azure/getSasToken';
+import downloadBlob from '@/azure/downloadBlob';
 
-const namespace = "homeStorage";
+const namespace = 'homeStorage';
 
 @Component({
   components: {
-    "tree-item": TreeItem
-  }
+    'tree-item': TreeItem,
+  },
 })
 export default class HomeStorage extends Vue {
-  @Action("getContainers", { namespace })
+  @Action('getContainers', { namespace })
   public getContainers: any;
 
-  @Action("getBlobsByContainer", { namespace })
+  @Action('getBlobsByContainer', { namespace })
   public getBlobsByContainer: any;
 
-  @Getter("containers", { namespace })
+  @Getter('containers', { namespace })
   public containers!: ContainerItem[];
 
-  @Getter("blobsByContainerTree", { namespace })
+  @Getter('blobsByContainerTree', { namespace })
   public tree!: any;
 
-  @Getter("blobByName", { namespace })
+  @Getter('blobByName', { namespace })
   public blobByName!: any;
 
-  @Getter("activeBlob", { namespace })
+  @Getter('activeBlob', { namespace })
   public activeBlob!: BlobItem;
 
-  public previewUrl: string = "";
+  public previewUrl: string = '';
   public showPreview: boolean = true;
 
   public async mounted() {
     await this.getContainers();
-    await this.getBlobsByContainer("homestorage");
+    await this.getBlobsByContainer('homestorage');
   }
 
-  @Watch("activeBlob", { deep: true })
+  @Watch('activeBlob', { deep: true })
   public async onActiveBlobChanged(value: BlobItem | null) {
     if (value === null) {
-      this.previewUrl = "";
+      this.previewUrl = '';
       return;
     }
-    
+
     this.showPreview = false;
-    await this.$nextTick()
+    await this.$nextTick();
     this.showPreview = true;
-    
+
     const blobStorageUrl =
-      "https://storageanarae.blob.core.windows.net/homestorage";
-    const namePath = "/" + value.name;
+      'https://storageanarae.blob.core.windows.net/homestorage';
+    const namePath = '/' + value.name;
     const token = await getSasToken();
     this.previewUrl = blobStorageUrl + namePath + token;
   }
   // put into util file
   get activeBlobFileType(): string {
-    if (this.activeBlob === null || !this.activeBlob.properties.contentType)
-      return "";
+    if (this.activeBlob === null || !this.activeBlob.properties.contentType) {
+      return '';
+    }
     switch (this.activeBlob.properties.contentType) {
-      case "image/jpeg":
-        return "image";
-      case "video/quicktime":
-        return "video";
+      case 'image/jpeg':
+        return 'image';
+      case 'video/quicktime':
+        return 'video';
       default:
-        return "";
+        return '';
     }
   }
 
@@ -117,15 +118,15 @@ export default class HomeStorage extends Vue {
     }
 
     const token = await getSasToken();
-    if (typeof token !== "string") {
+    if (typeof token !== 'string') {
       return;
     }
 
-    downloadBlob(token, "homestorage", blob.name, this.name(blob.name));
+    downloadBlob(token, 'homestorage', blob.name, this.name(blob.name));
   }
 
   public name(name: string) {
-    const strArr: string[] = name.split("/");
+    const strArr: string[] = name.split('/');
     return strArr[strArr.length - 1];
   }
 }

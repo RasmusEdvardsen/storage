@@ -1,4 +1,12 @@
-import { BlobURL, BlockBlobURL, Aborter, ContainerURL, AnonymousCredential, StorageURL, ServiceURL } from '@azure/storage-blob';
+import {
+    BlobURL,
+    BlockBlobURL,
+    Aborter,
+    ContainerURL,
+    AnonymousCredential,
+    StorageURL,
+    ServiceURL,
+} from '@azure/storage-blob';
 
 export default async function uploadFile(
     token: string,
@@ -20,7 +28,7 @@ export default async function uploadFile(
         Aborter.none,
         file,
         file.size,
-        {blobHTTPHeaders: {blobContentType: file.type}},
+        { blobHTTPHeaders: { blobContentType: file.type } },
     );
 
     return uploadBlobResponse._response.status;
