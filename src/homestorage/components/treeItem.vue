@@ -42,6 +42,7 @@ import Dropdown from '@/generic/dropdown.vue';
 const namespace = 'homeStorage';
 
 @Component({
+  name: 'tree-item',
   components: {
     dropdown: Dropdown,
   },

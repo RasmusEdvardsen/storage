@@ -70,7 +70,7 @@ export default class HomeStorage extends Vue {
 
   public async mounted() {
     await this.getContainers();
-    this.getBlobsByContainer('homestorage');
+    await this.getBlobsByContainer('homestorage');
   }
 
   @Watch('activeBlob', { deep: true })
