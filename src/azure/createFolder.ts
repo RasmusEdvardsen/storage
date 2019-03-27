@@ -3,7 +3,7 @@ import { BlobURL, BlockBlobURL, Aborter, ContainerURL, AnonymousCredential, Stor
 export default async function createFolder(
     token: string,
     containerName: string,
-    folderName: string
+    folderName: string,
 ): Promise<number> {
     const anonymousCredential = new AnonymousCredential();
     const pipeline = StorageURL.newPipeline(anonymousCredential);
@@ -13,13 +13,13 @@ export default async function createFolder(
     );
 
     const containerURL = ContainerURL.fromServiceURL(serviceURL, containerName);
-    const blobURL = BlobURL.fromContainerURL(containerURL, folderName + "/dummy.txt");
+    const blobURL = BlobURL.fromContainerURL(containerURL, folderName + '/dummy.txt');
     const blockBlobURL = BlockBlobURL.fromBlobURL(blobURL);
     const uploadBlobResponse = await blockBlobURL.upload(
         Aborter.none,
-        "",
-        0
+        '',
+        0,
     );
-    
+
     return uploadBlobResponse._response.status;
 }

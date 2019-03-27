@@ -30,46 +30,46 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { Component, Prop, Watch } from "vue-property-decorator";
+import Vue from 'vue';
+import { Component, Prop, Watch } from 'vue-property-decorator';
 
-import { Action, Getter } from "vuex-class";
+import { Action, Getter } from 'vuex-class';
 
-import { BlobItem } from "@azure/storage-blob/typings/lib/generated/lib/models";
+import { BlobItem } from '@azure/storage-blob/typings/lib/generated/lib/models';
 
-import Dropdown from "@/generic/dropdown.vue";
+import Dropdown from '@/generic/dropdown.vue';
 
-const namespace = "homeStorage";
+const namespace = 'homeStorage';
 
 @Component({
   components: {
-    dropdown: Dropdown
-  }
+    dropdown: Dropdown,
+  },
 })
 export default class TreeItem extends Vue {
   @Prop({ type: Object as () => {}, default: Object as () => {} })
   public item!: any;
 
-  @Action("setActiveBlob", { namespace })
+  @Action('setActiveBlob', { namespace })
   public setActiveBlob: any;
 
-  @Action("getBlobsByContainer", { namespace })
+  @Action('getBlobsByContainer', { namespace })
   public getBlobsByContainer: any;
 
-  @Action("createFolder", { namespace })
+  @Action('createFolder', { namespace })
   public createFolder: any;
 
-  @Action("uploadFile", { namespace })
-  uploadFile: any;
+  @Action('uploadFile', { namespace })
+  public uploadFile: any;
 
-  @Getter("activeBlob", { namespace })
+  @Getter('activeBlob', { namespace })
   public activeBlob!: BlobItem;
 
   public isOpen: boolean = false;
   public toggle: boolean = false;
   public showInput: boolean = false;
 
-  public folderName: string = "";
+  public folderName: string = '';
 
   get isFolder(): boolean {
     return this.item.children && this.item.children.length;
@@ -77,12 +77,12 @@ export default class TreeItem extends Vue {
 
   get icon(): string {
     const str =
-      "far " +
+      'far ' +
       (this.isFolder
         ? this.isOpen
-          ? "fa-folder-open"
-          : "fa-folder"
-        : " fa-file");
+          ? 'fa-folder-open'
+          : 'fa-folder'
+        : ' fa-file');
     return str;
   }
 
@@ -109,7 +109,7 @@ export default class TreeItem extends Vue {
     this.showInput = true;
     await this.$nextTick();
     try {
-      let input: HTMLInputElement = this.$refs.input as HTMLInputElement;
+      const input: HTMLInputElement = this.$refs.input as HTMLInputElement;
       input.focus();
     } catch (error) {
       console.error(error);
@@ -119,39 +119,39 @@ export default class TreeItem extends Vue {
   public async newFolderEntered() {
     //  todo: look into generalized naming validator for both names/folders
     //  no slashes (/), no 'azure', no 'homestorage', no spaces, no '_'.
-    let fullPath: string = this.item.fullPath;
-    if (this.folderName.length < 1 && !this.item.fullPath) return;
-    let folderName =
-      fullPath.length > 0 ? fullPath + "/" + this.folderName : this.folderName;
-    await this.createFolder({ containerName: "homestorage", folderName });
-    await this.getBlobsByContainer("homestorage");
+    const fullPath: string = this.item.fullPath;
+    if (this.folderName.length < 1 && !this.item.fullPath) { return; }
+    const folderName =
+      fullPath.length > 0 ? fullPath + '/' + this.folderName : this.folderName;
+    await this.createFolder({ containerName: 'homestorage', folderName });
+    await this.getBlobsByContainer('homestorage');
     this.showInput = false;
   }
 
   public async newFileSelected(e: Event) {
-    if (!e.target) return;
+    if (!e.target) { return; }
 
-    let input = e.target as HTMLInputElement;
-    let fileList = input.files;
-    if (!fileList || fileList.length < 1) return;
+    const input = e.target as HTMLInputElement;
+    const fileList = input.files;
+    if (!fileList || fileList.length < 1) { return; }
 
-    let file = fileList.item(0);
-    if (!file) return;
+    const file = fileList.item(0);
+    if (!file) { return; }
 
-    let fullPath: string = this.item.fullPath;
-    if (!this.item.fullPath) return;
-    let fileName = fullPath.length > 0 ? fullPath + "/" + file.name : file.name;
+    const fullPath: string = this.item.fullPath;
+    if (!this.item.fullPath) { return; }
+    const fileName = fullPath.length > 0 ? fullPath + '/' + file.name : file.name;
 
-    let uploaded = await this.uploadFile({ containerName: "homestorage", fileName, file });
+    const uploaded = await this.uploadFile({ containerName: 'homestorage', fileName, file });
 
     if (uploaded === 200) {
-      alert('upload done!')
+      alert('upload done!');
     }
 
     this.toggle = false;
     this.isOpen = true;
-    
-    await this.getBlobsByContainer("homestorage");
+
+    await this.getBlobsByContainer('homestorage');
   }
 }
 </script>

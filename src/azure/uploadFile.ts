@@ -4,7 +4,7 @@ export default async function uploadFile(
     token: string,
     containerName: string,
     fileName: string,
-    file: File
+    file: File,
 ): Promise<number> {
     const anonymousCredential = new AnonymousCredential();
     const pipeline = StorageURL.newPipeline(anonymousCredential);
@@ -20,8 +20,8 @@ export default async function uploadFile(
         Aborter.none,
         file,
         file.size,
-        {blobHTTPHeaders:{blobContentType: file.type}}
+        {blobHTTPHeaders: {blobContentType: file.type}},
     );
-    
+
     return uploadBlobResponse._response.status;
 }

@@ -8,18 +8,18 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { Component, Prop, Watch } from "vue-property-decorator";
+import Vue from 'vue';
+import { Component, Prop, Watch } from 'vue-property-decorator';
 
 @Component
 export default class Dropdown extends Vue {
   @Prop({ type: Boolean, default: false })
-  toggle!: boolean;
+  public toggle!: boolean;
 
-  t: boolean = false;
+  public t: boolean = false;
 
-  @Watch("toggle")
-  onToggleChanged(value: boolean) {
+  @Watch('toggle')
+  public onToggleChanged(value: boolean) {
     this.t = value;
   }
 }
