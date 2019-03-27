@@ -7,6 +7,10 @@
       <dropdown :toggle="toggle" v-model="toggle">
         <div slot="content">
           <div class="option" @click.stop="newFolderOption">New folder</div>
+          <div class="option" @click.stop>
+            <div class="file-click">New file</div>
+            <input type="file" id="new-file" @change="newFileSelected($event)">
+          </div>
         </div>
       </dropdown>
     </div>
@@ -120,6 +124,22 @@ export default class TreeItem extends Vue {
     await this.getBlobsByContainer("homestorage");
     this.showInput = false;
   }
+
+  public async newFileSelected(e: Event) {
+    if (!e.target) return;
+
+    let input = e.target as HTMLInputElement;
+    let fileList = input.files;
+    if (!fileList || fileList.length < 1) return;
+
+    let file = fileList.item(0);
+    if (!file) return;
+
+    
+
+    this.toggle = false;
+    this.isOpen = true;
+  }
 }
 </script>
 
@@ -130,5 +150,25 @@ export default class TreeItem extends Vue {
 .item .item-icon,
 .item .item-name {
   display: inline;
+}
+
+.option {
+  position: relative;
+  overflow: hidden;
+}
+
+.option:not(:last-child) {
+  padding-bottom: 10px;
+  margin-bottom: 10px;
+
+  border-bottom: 1px solid gainsboro;
+}
+
+.option input[type="file"] {
+  font-size: 100px;
+  position: absolute;
+  left: 0;
+  top: 0;
+  opacity: 0;
 }
 </style>

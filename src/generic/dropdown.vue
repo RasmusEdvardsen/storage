@@ -35,9 +35,14 @@ export default class Dropdown extends Vue {
   position: absolute;
   background-color: #f9f9f9;
   min-width: 160px;
-  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
-  padding: 12px 16px;
+  padding: 10px;
   z-index: 10;
+  border-radius: 2px;
+  border: 1px solid gainsboro;
+  
+  -webkit-box-shadow: 2px 2px 4px 0px rgba(0, 0, 0, 0.5);
+  -moz-box-shadow: 2px 2px 4px 0px rgba(0, 0, 0, 0.5);
+  box-shadow: 2px 2px 4px 0px rgba(0, 0, 0, 0.5);
 }
 
 .dropdown .dropdown-content.expanded {
@@ -45,16 +50,16 @@ export default class Dropdown extends Vue {
 }
 
 .overlay {
-    display: none;
+  display: none;
 }
 
 .overlay.expanded {
-    display: inline-block;
-    position: absolute;
-    top: 0;
-    left: 0;
-    height: 100vh;
-    width: 100vw;
-    z-index: 9;
+  display: inline-block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 100vw;
+  z-index: 9;
 }
 </style>
