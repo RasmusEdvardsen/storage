@@ -18,6 +18,7 @@ export const mutations: MutationTree<HomeStorageState> = {
         const tree = pathStringsToTreeStructure(strs);
         state.blobsByContainerTree = {
             name: blobs.containerName,
+            fullPath: '',
             children: tree,
         };
     },

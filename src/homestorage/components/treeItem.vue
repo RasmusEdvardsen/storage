@@ -5,11 +5,22 @@
       <div class="item-name mr-10 ml-10">{{ item.name }}</div>
       <!-- <div :class="toggle ? 'far fa-minus-square' : 'far fa-plus-square'" @click.stop="toggle=!toggle"></div> -->
       <dropdown :toggle="toggle" v-model="toggle">
-        <div slot="content">here be content</div>
+        <div slot="content">
+          <div class="option" @click.stop="newFolderOption">New folder</div>
+        </div>
       </dropdown>
     </div>
     <ul v-show="isOpen" v-if="isFolder">
       <tree-item class="item" v-for="(child, index) in item.children" :key="index" :item="child"></tree-item>
+      <input
+        ref="input"
+        v-if="showInput"
+        v-model="folderName"
+        type="text"
+        @blur="showInput=false"
+        @keyup.enter="newFolderEntered()"
+        placeholder="Folder name"
+      >
     </ul>
   </li>
 </template>
@@ -38,12 +49,20 @@ export default class TreeItem extends Vue {
   @Action("setActiveBlob", { namespace })
   public setActiveBlob: any;
 
+  @Action("getBlobsByContainer", { namespace })
+  public getBlobsByContainer: any;
+
+  @Action("createFolder", { namespace })
+  public createFolder: any;
+
   @Getter("activeBlob", { namespace })
   public activeBlob!: BlobItem;
 
   public isOpen: boolean = false;
-
   public toggle: boolean = false;
+  public showInput: boolean = false;
+
+  public folderName: string = "";
 
   get isFolder(): boolean {
     return this.item.children && this.item.children.length;
@@ -75,6 +94,31 @@ export default class TreeItem extends Vue {
     } else if (item.fullPath) {
       this.setActiveBlob(item.fullPath);
     }
+  }
+
+  public async newFolderOption() {
+    this.toggle = false;
+    this.isOpen = true;
+    this.showInput = true;
+    await this.$nextTick();
+    try {
+      let input: HTMLInputElement = this.$refs.input as HTMLInputElement;
+      input.focus();
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  public async newFolderEntered() {
+    //  todo: look into generalized naming validator for both names/folders
+    //  no slashes (/), no 'azure', no 'homestorage', no spaces, no '_'.
+    let fullPath: string = this.item.fullPath;
+    if (this.folderName.length < 1 && !this.item.fullPath) return;
+    let folderName =
+      fullPath.length > 0 ? fullPath + "/" + this.folderName : this.folderName;
+    await this.createFolder({ containerName: "homestorage", folderName });
+    await this.getBlobsByContainer("homestorage");
+    this.showInput = false;
   }
 }
 </script>
