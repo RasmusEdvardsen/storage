@@ -112,7 +112,7 @@ export default class HomeStorage extends Vue {
   display: flex;
   width: 1200px;
   border-radius: 20px;
-  border: 2px solid cornflowerblue;
+  border: 2px solid rgb(0, 0, 100);
 
   -webkit-box-shadow: 2px 2px 4px 0px rgba(0, 0, 0, 0.5);
   -moz-box-shadow: 2px 2px 4px 0px rgba(0, 0, 0, 0.5);
