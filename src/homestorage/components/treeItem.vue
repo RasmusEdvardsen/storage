@@ -1,9 +1,9 @@
 <template>
   <li>
-    <div class="item mb-5" @click="itemClick(item)">
+    <div class="item mb-5" @click="itemClick(item)" @contextmenu="contextMenuHandler($event)">
       <div :class="[icon, 'item-icon', 'mr-10', 'ml-10']"></div>
       <div class="item-name mr-10 ml-10">{{ item.name }}</div>
-      <div :class="toggle ? 'far fa-minus-square' : 'far fa-plus-square'" @click.stop="toggle=!toggle"></div>
+      <!-- <div :class="toggle ? 'far fa-minus-square' : 'far fa-plus-square'" @click.stop="toggle=!toggle"></div> -->
       <dropdown :toggle="toggle" v-model="toggle">
         <div slot="content">here be content</div>
       </dropdown>
@@ -67,10 +67,6 @@ export default class TreeItem extends Vue {
 
     e.preventDefault();
     this.toggle = true;
-  }
-
-  public toggleMenu(e: MouseEvent) {
-    e.stopPropagation();
   }
 
   public itemClick(item: any) {
