@@ -3,7 +3,7 @@
     <div class="item mb-5" @click="itemClick(item)" @contextmenu="contextMenuHandler($event)">
       <div :class="[icon, 'item-icon', 'mr-10', 'ml-10']"></div>
       <div class="item-name mr-10 ml-10">{{ item.name }}</div>
-      <!-- <div :class="toggle ? 'far fa-minus-square' : 'far fa-plus-square'" @click.stop="toggle=!toggle"></div> -->
+      <div v-if="isFolder" :class="toggle ? 'far fa-minus-square' : 'far fa-plus-square'" @click.stop="toggle=!toggle"></div>
       <dropdown :toggle="toggle" v-model="toggle">
         <div slot="content">
           <div class="option" @click.stop="newFolderOption">New folder</div>
@@ -142,7 +142,11 @@ export default class TreeItem extends Vue {
     if (!this.item.fullPath) return;
     let fileName = fullPath.length > 0 ? fullPath + "/" + file.name : file.name;
 
-    await this.uploadFile({ containerName: "homestorage", fileName, file });
+    let uploaded = await this.uploadFile({ containerName: "homestorage", fileName, file });
+
+    if (uploaded === 200) {
+      alert('upload done!')
+    }
 
     this.toggle = false;
     this.isOpen = true;
