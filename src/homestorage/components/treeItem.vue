@@ -59,6 +59,9 @@ export default class TreeItem extends Vue {
   @Action("createFolder", { namespace })
   public createFolder: any;
 
+  @Action("uploadFile", { namespace })
+  uploadFile: any;
+
   @Getter("activeBlob", { namespace })
   public activeBlob!: BlobItem;
 
@@ -135,10 +138,16 @@ export default class TreeItem extends Vue {
     let file = fileList.item(0);
     if (!file) return;
 
-    
+    let fullPath: string = this.item.fullPath;
+    if (!this.item.fullPath) return;
+    let fileName = fullPath.length > 0 ? fullPath + "/" + file.name : file.name;
+
+    await this.uploadFile({ containerName: "homestorage", fileName, file });
 
     this.toggle = false;
     this.isOpen = true;
+    
+    await this.getBlobsByContainer("homestorage");
   }
 }
 </script>

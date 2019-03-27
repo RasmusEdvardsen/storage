@@ -6,6 +6,7 @@ import getSasToken from '@/azure/getSasToken';
 import getContainers from '@/azure/getContainers';
 import getBlobsByContainer from '@/azure/getBlobsByContainer';
 import createFolder from '@/azure/createFolder';
+import uploadFile from '@/azure/uploadFile';
 
 export const actions: ActionTree<HomeStorageState, RootState> = {
     async getContainers({ commit }): Promise<number> {
@@ -48,8 +49,18 @@ export const actions: ActionTree<HomeStorageState, RootState> = {
         } catch (error) {
             return 500;
         }
+    },
+    async uploadFile({ commit }, p: { containerName: string, fileName: string, file: File }): Promise<number> {
+        try {
+            const token: string | number = await getSasToken();
+            if (typeof (token) === 'number') { return token; }
 
+            uploadFile(token, p.containerName, p.fileName, p.file);
 
+            return 200;
+        } catch (error) {
+            return 500;
+        }
     },
     setActiveBlob({ commit }, name: string) {
         if (name) { commit('activeBlobSet', name); }
