@@ -9,7 +9,7 @@
           <div class="option" @click.stop="newFolderOption">New folder</div>
           <div class="option" @click.stop>
             <div class="file-click">New file</div>
-            <input type="file" id="new-file" @change="newFileSelected($event)">
+            <input type="file" id="new-file" @change="newFileSelected($event)" multiple>
           </div>
         </div>
       </dropdown>
@@ -38,6 +38,8 @@ import { Action, Getter } from 'vuex-class';
 import { BlobItem } from '@azure/storage-blob/typings/lib/generated/lib/models';
 
 import Dropdown from '@/generic/dropdown.vue';
+
+import * as log from '@/log/log';
 
 const namespace = 'homeStorage';
 
@@ -113,7 +115,7 @@ export default class TreeItem extends Vue {
       const input: HTMLInputElement = this.$refs.input as HTMLInputElement;
       input.focus();
     } catch (error) {
-      console.error(error);
+      log.error(error);
     }
   }
 
@@ -136,18 +138,21 @@ export default class TreeItem extends Vue {
     const fileList = input.files;
     if (!fileList || fileList.length < 1) { return; }
 
-    const file = fileList.item(0);
-    if (!file) { return; }
+    const numFiles = fileList.length;
+    let numFilesUploaded = 0;
+    for (let idx = 0; idx < fileList.length; idx++) {
+      const file = fileList.item(idx);
+      if (!file) { return; }
 
-    const fullPath: string = this.item.fullPath;
-    if (!this.item.fullPath) { return; }
-    const fileName = fullPath.length > 0 ? fullPath + '/' + file.name : file.name;
+      const fullPath: string = this.item.fullPath;
+      if (!this.item.fullPath) { return; }
+      const fileName = fullPath.length > 0 ? fullPath + '/' + file.name : file.name;
 
-    const uploaded = await this.uploadFile({ containerName: 'homestorage', fileName, file });
-
-    if (uploaded === 200) {
-      alert('upload done!');
+      const uploaded = await this.uploadFile({ containerName: 'homestorage', fileName, file });
+      if (uploaded === 200) { numFilesUploaded++; }
     }
+
+    alert(`Uploaded ${numFilesUploaded} of ${numFiles} files succesfully!`);
 
     this.toggle = false;
     this.isOpen = true;
