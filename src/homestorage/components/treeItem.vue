@@ -39,7 +39,7 @@ import { BlobItem } from '@azure/storage-blob/typings/lib/generated/lib/models';
 
 import Dropdown from '@/generic/dropdown.vue';
 
-import * as log from '@/log/log';
+import { info, error } from '@/log/log';
 
 const namespace = 'homeStorage';
 
@@ -115,7 +115,7 @@ export default class TreeItem extends Vue {
       const input: HTMLInputElement = this.$refs.input as HTMLInputElement;
       input.focus();
     } catch (error) {
-      log.error(error);
+      error(error);
     }
   }
 
@@ -138,6 +138,7 @@ export default class TreeItem extends Vue {
     const fileList = input.files;
     if (!fileList || fileList.length < 1) { return; }
 
+
     const numFiles = fileList.length;
     let numFilesUploaded = 0;
     for (let idx = 0; idx < fileList.length; idx++) {
@@ -149,13 +150,14 @@ export default class TreeItem extends Vue {
       const fileName = fullPath.length > 0 ? fullPath + '/' + file.name : file.name;
 
       const uploaded = await this.uploadFile({ containerName: 'homestorage', fileName, file });
-      if (uploaded === 200) { numFilesUploaded++; }
+      if (uploaded === 200 || uploaded === 201) { numFilesUploaded++; }
     }
-
-    alert(`Uploaded ${numFilesUploaded} of ${numFiles} files succesfully!`);
 
     this.toggle = false;
     this.isOpen = true;
+
+    info(`Uploaded ${numFilesUploaded} of ${numFiles} files. \n${fileInfos}`);
+    alert(`Uploaded ${numFilesUploaded} of ${numFiles} files succesfully!`);
 
     await this.getBlobsByContainer('homestorage');
   }

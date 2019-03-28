@@ -55,9 +55,9 @@ export const actions: ActionTree<HomeStorageState, RootState> = {
             const token: string | number = await getSasToken();
             if (typeof (token) === 'number') { return token; }
 
-            uploadFile(token, p.containerName, p.fileName, p.file);
+            const isUploaded = await uploadFile(token, p.containerName, p.fileName, p.file);
 
-            return 200;
+            return isUploaded;
         } catch (error) {
             return 500;
         }

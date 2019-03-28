@@ -106,6 +106,7 @@ export default class HomeStorage extends Vue {
       case 'image/jpeg':
         return 'image';
       case 'video/quicktime':
+      case 'video/mp4':
         return 'video';
       default:
         return '';
