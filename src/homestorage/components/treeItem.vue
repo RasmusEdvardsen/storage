@@ -156,7 +156,6 @@ export default class TreeItem extends Vue {
     this.toggle = false;
     this.isOpen = true;
 
-    info(`Uploaded ${numFilesUploaded} of ${numFiles} files. \n${fileInfos}`);
     alert(`Uploaded ${numFilesUploaded} of ${numFiles} files succesfully!`);
 
     await this.getBlobsByContainer('homestorage');
