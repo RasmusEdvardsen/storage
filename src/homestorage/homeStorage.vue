@@ -137,16 +137,23 @@ export default class HomeStorage extends Vue {
 #home-storage {
   display: flex;
   width: 1200px;
-  border-radius: 4px;
-  border: 2px solid rgb(0, 0, 100);
+  margin: -2px 0 0 -2px;
 
-  -webkit-box-shadow: 2px 2px 4px 0px rgba(0, 0, 0, 0.5);
-  -moz-box-shadow: 2px 2px 4px 0px rgba(0, 0, 0, 0.5);
-  box-shadow: 2px 2px 4px 0px rgba(0, 0, 0, 0.5);
+  border-radius: 4px;
+  border: 2px solid #bbdefb;
+
+  -webkit-box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.5);
+  -moz-box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.5);
+  box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.5);
 }
 #home-storage > *:not(.divider) {
   width: calc(49%);
+} 
+#trees-wrapper {
+  overflow-x: auto;
+  overflow-y: hidden;
 }
+
 #to-be-preview-component {
   margin: 20px;
 }
@@ -157,6 +164,48 @@ export default class HomeStorage extends Vue {
 .divider {
   border-left: 1px solid gainsboro;
   border-right: 1px solid gainsboro;
+}
+/*** media queries ***/
+/** duplicates **/
+@media screen and (max-device-width: 375px) {
+  #home-storage {
+    width: inherit;
+    display: block;
+    overflow-x: scroll;
+  }
+  #trees-wrapper {
+    width: initial!important;
+    overflow-x: scroll;
+  }
+  #trees-wrapper * {
+    width: max-content;
+  }
+  #preview {
+    width: calc(100%)!important;
+  }
+  .divider {
+    display: none;
+  }
+}
+@media screen and (max-device-width: 1080px) {
+  #home-storage {
+    width: inherit;
+    display: block;
+    overflow-x: scroll;
+  }
+  #trees-wrapper {
+    width: initial!important;
+    overflow-x: scroll;
+  }
+  #trees-wrapper * {
+    width: max-content;
+  }
+  #preview {
+    width: calc(100%)!important;
+  }
+  .divider {
+    display: none;
+  }
 }
 </style>
 
