@@ -21,6 +21,7 @@
         </div>
       </div>
     </div>
+    <upload-files-progress ref="ufp" />
   </div>
 </template>
 
@@ -31,6 +32,7 @@ import { Action, Getter } from 'vuex-class';
 
 /* components */
 import TreeItem from './components/treeItem.vue';
+import UploadFilesProgress from './components/uploadFilesProgress.vue';
 
 /* azure storage */
 import {
@@ -46,11 +48,15 @@ import { pathStringsToTreeStructure, findInTree } from './utils/treeUtils';
 import getSasToken from '@/azure/getSasToken';
 import downloadBlob from '@/azure/downloadBlob';
 
+/* events */
+import { EventBus, Event, IEventNewFiles } from '@/homestorage/eventBus.ts';
+
 const namespace = 'homeStorage';
 
 @Component({
   components: {
     'tree-item': TreeItem,
+    'upload-files-progress': UploadFilesProgress,
   },
 })
 export default class HomeStorage extends Vue {
@@ -75,8 +81,18 @@ export default class HomeStorage extends Vue {
   public previewUrl: string = '';
   public showPreview: boolean = true;
 
+  $refs!: {
+    ufp: UploadFilesProgress
+  }
+
   public async mounted() {
     await this.getContainers();
+    await this.getBlobsByContainer('homestorage');
+    EventBus.$on(Event.NEWFILES, this.openUploadFilesProgress)
+  }
+  async openUploadFilesProgress(newFiles: IEventNewFiles) {
+    let ufp: UploadFilesProgress = this.$refs.ufp;
+    await ufp.openAndShowProgress(newFiles.fileList, newFiles.folderPath);
     await this.getBlobsByContainer('homestorage');
   }
 
@@ -140,13 +156,14 @@ export default class HomeStorage extends Vue {
   margin: -2px 0 0 -2px;
 
   border-radius: 4px;
-  border: 2px solid #bbdefb;
+  border: 2px solid #5c768c;
 
   -webkit-box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.5);
   -moz-box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.5);
   box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.5);
 }
-#home-storage > *:not(.divider) {
+#home-storage > #trees-wrapper,
+#home-storage > #to-be-preview-component {
   width: calc(49%);
 } 
 #trees-wrapper {
@@ -162,31 +179,11 @@ export default class HomeStorage extends Vue {
   max-height: 100%;
 }
 .divider {
-  border-left: 1px solid gainsboro;
-  border-right: 1px solid gainsboro;
+  border-left: 1px solid #5c768c;
+  border-right: 1px solid #5c768c;
 }
 /*** media queries ***/
 /** duplicates **/
-@media screen and (max-device-width: 375px) {
-  #home-storage {
-    width: inherit;
-    display: block;
-    overflow-x: scroll;
-  }
-  #trees-wrapper {
-    width: initial!important;
-    overflow-x: scroll;
-  }
-  #trees-wrapper * {
-    width: max-content;
-  }
-  #preview {
-    width: calc(100%)!important;
-  }
-  .divider {
-    display: none;
-  }
-}
 @media screen and (max-device-width: 1080px) {
   #home-storage {
     width: inherit;

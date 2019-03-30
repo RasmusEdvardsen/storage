@@ -6,7 +6,8 @@ import getSasToken from '@/azure/getSasToken';
 import getContainers from '@/azure/getContainers';
 import getBlobsByContainer from '@/azure/getBlobsByContainer';
 import createFolder from '@/azure/createFolder';
-import uploadFile from '@/azure/uploadFile';
+import uploadFile, { uploadFileWithCallback } from '@/azure/uploadFile';
+import { TransferProgressEvent } from '@azure/ms-rest-js';
 
 export const actions: ActionTree<HomeStorageState, RootState> = {
     async getContainers({ commit }): Promise<number> {
@@ -50,12 +51,19 @@ export const actions: ActionTree<HomeStorageState, RootState> = {
             return 500;
         }
     },
-    async uploadFile({ commit }, p: { containerName: string, fileName: string, file: File }): Promise<number> {
+    async uploadFile(
+        _,
+        p: {
+            containerName: string,
+            fileName: string,
+            file: File,
+            cb: (e: TransferProgressEvent) => void
+        }): Promise<number> {
         try {
             const token: string | number = await getSasToken();
             if (typeof (token) === 'number') { return token; }
 
-            const isUploaded = await uploadFile(token, p.containerName, p.fileName, p.file);
+            const isUploaded = await uploadFileWithCallback(token, p.containerName, p.fileName, p.file, p.cb);
 
             return isUploaded;
         } catch (error) {

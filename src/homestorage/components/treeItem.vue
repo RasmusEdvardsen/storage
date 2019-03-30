@@ -3,12 +3,17 @@
     <div class="item mb-5" @click="itemClick(item)" @contextmenu="contextMenuHandler($event)">
       <div :class="[icon, 'item-icon', 'mr-10', 'ml-10']"></div>
       <div class="item-name mr-10 ml-10">{{ item.name }}</div>
-      <div v-if="isFolder" :class="toggle ? 'far fa-minus-square' : 'far fa-plus-square'" @click.stop="toggle=!toggle"></div>
+      <div
+        v-if="isFolder"
+        :class="toggle ? 'far fa-minus-square' : 'far fa-plus-square'"
+        @click.stop="toggle=!toggle"
+      ></div>
       <dropdown :toggle="toggle" v-model="toggle">
         <div slot="content">
           <div class="option" @click.stop="newFolderOption">New folder</div>
           <div class="option" @click.stop>
-            <div class="file-click">New file</div>
+            <div class="file-click">New file(s)</div>
+            <!-- @change only fires when different file uploaded. -->
             <input type="file" id="new-file" @change="newFileSelected($event)" multiple>
           </div>
         </div>
@@ -41,12 +46,14 @@ import Dropdown from '@/generic/dropdown.vue';
 
 import { info, error } from '@/log/log';
 
+import { EventBus, Event as CustomEvents, IEventNewFiles } from '@/homestorage/eventBus.ts';
+
 const namespace = 'homeStorage';
 
 @Component({
   name: 'tree-item',
   components: {
-    dropdown: Dropdown,
+    'dropdown': Dropdown,
   },
 })
 export default class TreeItem extends Vue {
@@ -62,9 +69,6 @@ export default class TreeItem extends Vue {
   @Action('createFolder', { namespace })
   public createFolder: any;
 
-  @Action('uploadFile', { namespace })
-  public uploadFile: any;
-
   @Getter('activeBlob', { namespace })
   public activeBlob!: BlobItem;
 
@@ -73,6 +77,10 @@ export default class TreeItem extends Vue {
   public showInput: boolean = false;
 
   public folderName: string = '';
+  
+  $refs!: {
+    input: HTMLInputElement,
+  }
 
   get isFolder(): boolean {
     return this.item.children && this.item.children.length;
@@ -112,7 +120,7 @@ export default class TreeItem extends Vue {
     this.showInput = true;
     await this.$nextTick();
     try {
-      const input: HTMLInputElement = this.$refs.input as HTMLInputElement;
+      const input: HTMLInputElement = this.$refs.input;
       input.focus();
     } catch (error) {
       error(error);
@@ -123,7 +131,9 @@ export default class TreeItem extends Vue {
     //  todo: look into generalized naming validator for both names/folders
     //  no slashes (/), no 'azure', no 'homestorage', no spaces, no '_'.
     const fullPath: string = this.item.fullPath;
-    if (this.folderName.length < 1 && !this.item.fullPath) { return; }
+    if (this.folderName.length < 1 && !this.item.fullPath) {
+      return;
+    }
     const folderName =
       fullPath.length > 0 ? fullPath + '/' + this.folderName : this.folderName;
     await this.createFolder({ containerName: 'homestorage', folderName });
@@ -131,34 +141,17 @@ export default class TreeItem extends Vue {
     this.showInput = false;
   }
 
-  public async newFileSelected(e: Event) {
-    if (!e.target) { return; }
+  public async newFileSelected(e: Event): Promise<void> {
+    this.toggle = false, this.isOpen = true;
 
-    const input = e.target as HTMLInputElement;
-    const fileList = input.files;
+    const fileList = (e.target as HTMLInputElement).files;
     if (!fileList || fileList.length < 1) { return; }
+    if (!this.item.fullPath) return;
 
+    let newFiles: IEventNewFiles = { fileList, folderPath: this.item.fullPath };
+    EventBus.$emit(CustomEvents.NEWFILES, newFiles);
 
-    const numFiles = fileList.length;
-    let numFilesUploaded = 0;
-    for (let idx = 0; idx < fileList.length; idx++) {
-      const file = fileList.item(idx);
-      if (!file) { return; }
-
-      const fullPath: string = this.item.fullPath;
-      if (!this.item.fullPath) { return; }
-      const fileName = fullPath.length > 0 ? fullPath + '/' + file.name : file.name;
-
-      const uploaded = await this.uploadFile({ containerName: 'homestorage', fileName, file });
-      if (uploaded === 200 || uploaded === 201) { numFilesUploaded++; }
-    }
-
-    this.toggle = false;
-    this.isOpen = true;
-
-    alert(`Uploaded ${numFilesUploaded} of ${numFiles} files succesfully!`);
-
-    await this.getBlobsByContainer('homestorage');
+    return;
   }
 }
 </script>
