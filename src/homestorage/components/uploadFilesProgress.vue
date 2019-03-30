@@ -1,17 +1,24 @@
 <template>
-  <modal class="upload-files-progress" :toggle="toggle" v-model="toggle">qwf</modal>
+  <modal class="upload-files-progress" :toggle="toggle" v-model="toggle">
+    <div slot="content">
+      <div class="num-file">Number of files to upload: {{numFiles}}</div>
+      <div class="num-files-uploaded">Number of files uploaded: {{numFilesUploaded}}</div>
+      <div class="current-file">Name of current file: {{currentFile.name}}</div>
+      <div class="current-file-progress">Upload status: {{currentFileProgress}}%</div>
+    </div>
+  </modal>
 </template>
 
 <script lang="ts">
 import Vue from "vue";
 import { Component, Watch } from "vue-property-decorator";
 
-import { Action } from 'vuex-class';
+import { Action } from "vuex-class";
 
 import Modal from "@/generic/modal.vue";
-import { TransferProgressEvent } from '@azure/ms-rest-js';
+import { TransferProgressEvent } from "@azure/ms-rest-js";
 
-const namespace = 'homeStorage';
+const namespace = "homeStorage";
 
 @Component({
   components: {
@@ -19,48 +26,56 @@ const namespace = 'homeStorage';
   }
 })
 export default class UploadFilesProgress extends Vue {
-  @Action('uploadFile', { namespace })
+  @Action("uploadFile", { namespace })
   uploadFile: any;
 
   toggle: boolean = false;
 
-  @Watch('toggle')
-  onChange(n: boolean, o: boolean) {
-      console.log(this.toggle, n, o);
+  numFiles: number = 0;
+  numFilesUploaded: number = 0;
+  currentFile: File = new File([], "");
+  currentFileProgress: number = 0;
+
+  clearAndClose() {
+    this.toggle = false;
+    this.numFiles = 0;
+    this.numFilesUploaded = 0;
+    this.currentFile = new File([], "");
   }
 
-  public async openAndShowProgress(fileList: FileList, folderPath: string) {
-    this.toggle = true;
+  public async openAndShowProgress(
+    fileList: FileList,
+    folderPath: string
+  ): Promise<void> {
+    const numFiles = fileList.length;
+
+    (this.toggle = true), (this.numFiles = numFiles);
+    for (let idx = 0; idx < fileList.length; idx++) {
+      const file = fileList.item(idx);
+      if (!file) {
+        return;
+      }
+
+      const fileName =
+        folderPath.length > 0 ? folderPath + "/" + file.name : file.name;
+
+      this.currentFile = file;
+
+      const uploaded = await this.uploadFile({
+        containerName: "homestorage",
+        fileName,
+        file,
+        cb: (progress: TransferProgressEvent) => {
+          this.currentFileProgress = Math.floor(
+            (progress.loadedBytes / file.size) * 100
+          );
+        }
+      });
+      if (uploaded === 200 || uploaded === 201) {
+        this.numFilesUploaded++;
+      }
+    }
     return;
-    // const numFiles = fileList.length;
-    // let numFilesUploaded = 0;
-    // for (let idx = 0; idx < fileList.length; idx++) {
-    //   const file = fileList.item(idx);
-    //   if (!file) {
-    //     return;
-    //   }
-
-    //   const fileName =
-    //     folderPath.length > 0 ? folderPath + "/" + file.name : file.name;
-
-    //   const uploaded = await this.uploadFile({
-    //     containerName: "homestorage",
-    //     fileName,
-    //     file,
-    //     cb: (progress: TransferProgressEvent) => {
-    //       console.log(
-    //         `Upload status: ${Math.floor(
-    //           (progress.loadedBytes / file.size) * 100
-    //         )}%\n${fileName}`
-    //       );
-    //     }
-    //   });
-    //   if (uploaded === 200 || uploaded === 201) {
-    //     numFilesUploaded++;
-    //   }
-    // }
-
-    // alert(`Uploaded ${numFilesUploaded} of ${numFiles} files succesfully!`);
   }
 }
 </script>

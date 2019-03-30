@@ -152,6 +152,7 @@ export default class HomeStorage extends Vue {
 <style scoped>
 #home-storage {
   display: flex;
+  position: relative;
   width: 1200px;
   margin: -2px 0 0 -2px;
 
