@@ -22,7 +22,7 @@ import { Action, Getter } from "vuex-class";
 
 import { BlobItem } from "@azure/storage-blob/typings/lib/generated/lib/models";
 import getSasToken from "@/azure/getSasToken";
-import downloadBlob from '@/azure/downloadBlob';
+import downloadBlob from "@/azure/downloadBlob";
 
 import { name } from "../utils/arrUtils";
 

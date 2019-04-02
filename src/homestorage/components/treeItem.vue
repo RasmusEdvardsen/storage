@@ -2,7 +2,7 @@
   <li>
     <div class="item mb-5" @click="itemClick(item)" @contextmenu="contextMenuHandler($event)">
       <div :class="[icon, 'item-icon', 'mr-10', 'ml-10']"></div>
-      <div class="item-name mr-10 ml-10">{{ item.name }}</div>
+      <div :class="['item-name', 'mr-10', 'ml-10', isActive]">{{ item.name }}</div>
       <div
         v-if="isFolder"
         :class="toggle ? 'far fa-minus-square' : 'far fa-plus-square'"
@@ -97,6 +97,10 @@ export default class TreeItem extends Vue {
     return str;
   }
 
+  get isActive() {
+    return this.activeBlob && this.activeBlob.name === this.item.fullPath ? "active" : "";
+  }
+
   public contextMenuHandler(e: MouseEvent) {
     if (!this.isFolder) {
       return;
@@ -128,8 +132,6 @@ export default class TreeItem extends Vue {
   }
 
   public async newFolderEntered() {
-    //  todo: look into generalized naming validator for both names/folders
-    //  no slashes (/), no 'azure', no 'homestorage', no spaces, no '_'.
     const fullPath: string = this.item.fullPath;
     if (this.folderName.length < 1 && !this.item.fullPath) {
       return;
@@ -164,7 +166,12 @@ export default class TreeItem extends Vue {
 .item .item-name {
   display: inline;
 }
-
+.item-name.active {
+  background-color: #5c768c;
+  color: white;
+  border-radius: 20px;
+  padding: 2px 20px;
+}
 .option {
   position: relative;
   overflow: hidden;

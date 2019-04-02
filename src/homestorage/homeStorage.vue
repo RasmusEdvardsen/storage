@@ -24,7 +24,7 @@ import PreviewWrapper from "./components/previewWrapper.vue";
 /* azure storage */
 import {
   ContainerItem,
-  BlobItem
+  BlobItem,
 } from "@azure/storage-blob/typings/lib/generated/lib/models";
 import { IBlobsByContainer } from "@/homestorage/module/homeStorageState";
 
@@ -45,8 +45,8 @@ const namespace = "homeStorage";
   components: {
     "tree-item": TreeItem,
     "upload-files-progress": UploadFilesProgress,
-    "preview-wrapper": PreviewWrapper
-  }
+    "preview-wrapper": PreviewWrapper,
+  },
 })
 export default class HomeStorage extends Vue {
   @Action("getContainers", { namespace })

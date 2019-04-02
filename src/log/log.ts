@@ -52,7 +52,6 @@ export async function error(err: string): Promise<void> {
     toStorage(token, "log", "error/" + dateFormatted, err);
 }
 
-// todo put all of this in utils folder
 /**
  * Prepends a 0 to n if n is less than 10, and returns that as a string.
  */
