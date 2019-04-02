@@ -9,21 +9,21 @@ export async function get<T>(url: string): Promise<WebResult<T>> {
 
         return new WebResult(call.status, json);
     } catch (error) {
-        return new WebResult<T>(500, undefined, 'Error occurred.');
+        return new WebResult<T>(500, undefined, "Error occurred.");
     }
 }
 
 export async function getWithRetry(url: string): Promise<any> {
-    return await new WebResult(500, 'not implemented');
+    return await new WebResult(500, "not implemented");
 }
 
 export async function post(url: string, payload: any): Promise<any> {
     try {
         const call = await fetch(url, {
             headers: {
-                'Content-Type': 'application/json',
+                "Content-Type": "application/json",
             },
-            method: 'post',
+            method: "post",
             body: JSON.stringify(payload),
         });
         if (!call.ok) { return new WebResult(call.status, call.statusText); }
@@ -32,32 +32,32 @@ export async function post(url: string, payload: any): Promise<any> {
 
         return new WebResult(call.status, JSON.stringify(json));
     } catch (error) {
-        return new WebResult(500, 'Error occurred.');
+        return new WebResult(500, "Error occurred.");
     }
 }
 
 export async function postWithRetry(url: string, payload: any): Promise<any> {
-    return await new WebResult(500, 'not implemented');
+    return await new WebResult(500, "not implemented");
 }
 
 export async function put(url: string, payload: any): Promise<any> {
-    return await new WebResult(500, 'not implemented');
+    return await new WebResult(500, "not implemented");
 }
 
 export async function putWithRetry(url: string, payload: any): Promise<any> {
-    return await new WebResult(500, 'not implemented');
+    return await new WebResult(500, "not implemented");
 }
 
 export async function remove(url: string): Promise<any> {
-    return await new WebResult(500, 'not implemented');
+    return await new WebResult(500, "not implemented");
 }
 
 export async function del(url: string): Promise<any> {
-    return await new WebResult(500, 'not implemented');
+    return await new WebResult(500, "not implemented");
 }
 
 export async function delWithRetry(url: string): Promise<any> {
-    return await new WebResult(500, 'not implemented');
+    return await new WebResult(500, "not implemented");
 }
 
 export class WebResult<T> {

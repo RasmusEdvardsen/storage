@@ -1,12 +1,12 @@
-import Vue from 'vue';
-import Vuex, { StoreOptions } from 'vuex';
-import RootState from './rootState';
+import Vue from "vue";
+import Vuex, { StoreOptions } from "vuex";
+import RootState from "./rootState";
 
-import { homeStorage } from '../homestorage/module';
+import { homeStorage } from "../homestorage/module";
 
 Vue.use(Vuex);
 const storeOptions: StoreOptions<RootState> = {
-    state: { version: '1.0.0' },
+    state: { version: "1.0.0" },
     modules: {
         homeStorage,
     },

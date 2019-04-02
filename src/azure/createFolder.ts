@@ -6,7 +6,7 @@ import {
     AnonymousCredential,
     StorageURL,
     ServiceURL,
-} from '@azure/storage-blob';
+} from "@azure/storage-blob";
 
 export default async function createFolder(
     token: string,
@@ -21,11 +21,11 @@ export default async function createFolder(
     );
 
     const containerURL = ContainerURL.fromServiceURL(serviceURL, containerName);
-    const blobURL = BlobURL.fromContainerURL(containerURL, folderName + '/dummy.txt');
+    const blobURL = BlobURL.fromContainerURL(containerURL, folderName + "/dummy.txt");
     const blockBlobURL = BlockBlobURL.fromBlobURL(blobURL);
     const uploadBlobResponse = await blockBlobURL.upload(
         Aborter.none,
-        '',
+        "",
         0,
     );
 

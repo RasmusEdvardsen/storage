@@ -1,9 +1,9 @@
-import { MutationTree } from 'vuex';
-import HomeStorageState, { IBlobsByContainer } from './homeStorageState';
+import { MutationTree } from "vuex";
+import HomeStorageState, { IBlobsByContainer } from "./homeStorageState";
 
-import { ContainerItem } from '@azure/storage-blob/typings/lib/generated/lib/models';
+import { ContainerItem } from "@azure/storage-blob/typings/lib/generated/lib/models";
 
-import { pathStringsToTreeStructure } from '../utils/treeUtils';
+import { pathStringsToTreeStructure } from "../utils/treeUtils";
 
 export const mutations: MutationTree<HomeStorageState> = {
     containersLoaded(state, containers: ContainerItem[]) {
@@ -18,7 +18,7 @@ export const mutations: MutationTree<HomeStorageState> = {
         const tree = pathStringsToTreeStructure(strs);
         state.blobsByContainerTree = {
             name: blobs.containerName,
-            fullPath: '',
+            fullPath: "",
             children: tree,
         };
     },

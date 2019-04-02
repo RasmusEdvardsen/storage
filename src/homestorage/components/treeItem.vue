@@ -35,52 +35,52 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
-import { Component, Prop, Watch } from 'vue-property-decorator';
+import Vue from "vue";
+import { Component, Prop, Watch } from "vue-property-decorator";
 
-import { Action, Getter } from 'vuex-class';
+import { Action, Getter } from "vuex-class";
 
-import { BlobItem } from '@azure/storage-blob/typings/lib/generated/lib/models';
+import { BlobItem } from "@azure/storage-blob/typings/lib/generated/lib/models";
 
-import Dropdown from '@/generic/dropdown.vue';
+import Dropdown from "@/generic/dropdown.vue";
 
-import { info, error } from '@/log/log';
+import { info, error } from "@/log/log";
 
-import { EventBus, Event as CustomEvents, IEventNewFiles } from '@/homestorage/eventBus.ts';
+import { EventBus, Event as CustomEvents, IEventNewFiles } from "@/homestorage/eventBus.ts";
 
-const namespace = 'homeStorage';
+const namespace = "homeStorage";
 
 @Component({
-  name: 'tree-item',
+  name: "tree-item",
   components: {
-    'dropdown': Dropdown,
+    dropdown: Dropdown,
   },
 })
 export default class TreeItem extends Vue {
   @Prop({ type: Object as () => {}, default: Object as () => {} })
   public item!: any;
 
-  @Action('setActiveBlob', { namespace })
+  @Action("setActiveBlob", { namespace })
   public setActiveBlob: any;
 
-  @Action('getBlobsByContainer', { namespace })
+  @Action("getBlobsByContainer", { namespace })
   public getBlobsByContainer: any;
 
-  @Action('createFolder', { namespace })
+  @Action("createFolder", { namespace })
   public createFolder: any;
 
-  @Getter('activeBlob', { namespace })
+  @Getter("activeBlob", { namespace })
   public activeBlob!: BlobItem;
 
   public isOpen: boolean = false;
   public toggle: boolean = false;
   public showInput: boolean = false;
 
-  public folderName: string = '';
-  
-  $refs!: {
+  public folderName: string = "";
+
+  public $refs!: {
     input: HTMLInputElement,
-  }
+  };
 
   get isFolder(): boolean {
     return this.item.children && this.item.children.length;
@@ -88,12 +88,12 @@ export default class TreeItem extends Vue {
 
   get icon(): string {
     const str =
-      'far ' +
+      "far " +
       (this.isFolder
         ? this.isOpen
-          ? 'fa-folder-open'
-          : 'fa-folder'
-        : ' fa-file');
+          ? "fa-folder-open"
+          : "fa-folder"
+        : " fa-file");
     return str;
   }
 
@@ -135,9 +135,9 @@ export default class TreeItem extends Vue {
       return;
     }
     const folderName =
-      fullPath.length > 0 ? fullPath + '/' + this.folderName : this.folderName;
-    await this.createFolder({ containerName: 'homestorage', folderName });
-    await this.getBlobsByContainer('homestorage');
+      fullPath.length > 0 ? fullPath + "/" + this.folderName : this.folderName;
+    await this.createFolder({ containerName: "homestorage", folderName });
+    await this.getBlobsByContainer("homestorage");
     this.showInput = false;
   }
 
@@ -146,9 +146,9 @@ export default class TreeItem extends Vue {
 
     const fileList = (e.target as HTMLInputElement).files;
     if (!fileList || fileList.length < 1) { return; }
-    if (!this.item.fullPath) return;
+    if (!this.item.fullPath) { return; }
 
-    let newFiles: IEventNewFiles = { fileList, folderPath: this.item.fullPath };
+    const newFiles: IEventNewFiles = { fileList, folderPath: this.item.fullPath };
     EventBus.$emit(CustomEvents.NEWFILES, newFiles);
 
     return;

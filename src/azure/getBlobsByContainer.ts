@@ -4,12 +4,12 @@ import {
     ServiceURL,
     ContainerURL,
     Aborter,
-} from '@azure/storage-blob';
+} from "@azure/storage-blob";
 import {
     ServiceListContainersSegmentResponse,
     ContainerItem,
     BlobItem,
-} from '@azure/storage-blob/typings/lib/generated/lib/models';
+} from "@azure/storage-blob/typings/lib/generated/lib/models";
 
 export default async function getBlobsByContainer(token: string, containerName: string): Promise<BlobItem[]> {
     const blobItems: BlobItem[] = [];
@@ -25,7 +25,7 @@ export default async function getBlobsByContainer(token: string, containerName: 
         const containerURL = ContainerURL.fromServiceURL(serviceURL, containerName);
 
 
-        let marker: string = '';
+        let marker: string = "";
         do {
             const listBlobsResponse = await containerURL.listBlobFlatSegment(
             Aborter.none,

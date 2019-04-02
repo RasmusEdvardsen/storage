@@ -1,12 +1,12 @@
-import Vue from 'vue';
+import Vue from "vue";
 
 export const EventBus = new Vue();
 
 export enum Event {
-    NEWFILES = 'newFiles'
+    NEWFILES = "newFiles",
 }
 
 export interface IEventNewFiles {
-    fileList: FileList,
-    folderPath: string
+    fileList: FileList;
+    folderPath: string;
 }

@@ -6,9 +6,9 @@ import {
     AnonymousCredential,
     StorageURL,
     ServiceURL,
-} from '@azure/storage-blob';
-import { error } from '@/log/log';
-import { TransferProgressEvent } from '@azure/ms-rest-js';
+} from "@azure/storage-blob";
+import { error } from "@/log/log";
+import { TransferProgressEvent } from "@azure/ms-rest-js";
 
 export default async function uploadFile(
     token: string,
@@ -34,7 +34,7 @@ export default async function uploadFile(
         );
         return uploadBlobResponse._response.status;
     } catch (err) {
-        error('error: ' + JSON.stringify(err));
+        error("error: " + JSON.stringify(err));
         return 500;
     }
 }
@@ -67,7 +67,7 @@ export async function uploadFileWithCallback(
         );
         return uploadBlobResponse._response.status;
     } catch (err) {
-        error('error: ' + JSON.stringify(err));
+        error("error: " + JSON.stringify(err));
         return 500;
     }
 }

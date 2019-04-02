@@ -1,27 +1,27 @@
-import uuid from 'uuid';
+import uuid from "uuid";
 
-export function pathStringsToTreeStructure(paths: string[], parentFullPath: string = '') {
+export function pathStringsToTreeStructure(paths: string[], parentFullPath: string = "") {
     const filtered: any = paths.reduce((acc: any, curr: string) => {
-        if (curr.indexOf('/') !== -1) {
-            const pathArr = curr.split('/');
+        if (curr.indexOf("/") !== -1) {
+            const pathArr = curr.split("/");
             const firstPath = pathArr[0];
             if (acc.find((c: any) => c.name === firstPath)) {
-                acc.find((c: any) => c.name === firstPath).children.push(pathArr.slice(1).join('/'));
+                acc.find((c: any) => c.name === firstPath).children.push(pathArr.slice(1).join("/"));
             } else {
                 acc.push({
                     id: uuid.v4(),
                     name: firstPath,
-                    fullPath: parentFullPath.length > 0 ? (parentFullPath + '/' + firstPath) : firstPath,
+                    fullPath: parentFullPath.length > 0 ? (parentFullPath + "/" + firstPath) : firstPath,
                     children: [
-                        pathArr.slice(1).join('/'),
+                        pathArr.slice(1).join("/"),
                     ],
                 });
             }
-        } else if (curr.indexOf('.') !== -1) {
+        } else if (curr.indexOf(".") !== -1) {
             acc.push({
                 id: uuid.v4(),
                 name: curr,
-                fullPath: parentFullPath.length > 0 ? (parentFullPath + '/' + curr) : curr,
+                fullPath: parentFullPath.length > 0 ? (parentFullPath + "/" + curr) : curr,
             });
         }
         return acc;
@@ -29,7 +29,7 @@ export function pathStringsToTreeStructure(paths: string[], parentFullPath: stri
     for (const key in filtered) {
         if (filtered.hasOwnProperty(key)) {
             const child = filtered[key];
-            if (Object.keys(child).includes('children')) {
+            if (Object.keys(child).includes("children")) {
                 child.children = pathStringsToTreeStructure(child.children, child.fullPath);
             }
         }
@@ -39,7 +39,7 @@ export function pathStringsToTreeStructure(paths: string[], parentFullPath: stri
 
 export function findInTree(tree: any[], id: string): any {
     for (const iterator of tree) {
-      if (iterator.id === id) { return iterator; } else if (Object.keys(iterator).includes('children')) {
+      if (iterator.id === id) { return iterator; } else if (Object.keys(iterator).includes("children")) {
         const found = findInTree(iterator.children, id);
         if (found) { return found; }
       }

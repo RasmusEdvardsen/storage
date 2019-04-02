@@ -5,9 +5,9 @@ import {
     StorageURL,
     ServiceURL,
     ContainerURL,
-} from '@azure/storage-blob';
+} from "@azure/storage-blob";
 
-import FileSaver from 'file-saver';
+import FileSaver from "file-saver";
 
 export default async function downloadBlob(
     token: string,

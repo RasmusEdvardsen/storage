@@ -3,11 +3,11 @@ import {
     StorageURL,
     ServiceURL,
     Aborter,
-} from '@azure/storage-blob';
+} from "@azure/storage-blob";
 import {
     ServiceListContainersSegmentResponse,
     ContainerItem,
-} from '@azure/storage-blob/typings/lib/generated/lib/models';
+} from "@azure/storage-blob/typings/lib/generated/lib/models";
 
 export default async function getContainers(token: string): Promise<ContainerItem[]> {
     try {
@@ -20,7 +20,7 @@ export default async function getContainers(token: string): Promise<ContainerIte
         );
 
         const containers: ContainerItem[] = [];
-        let marker: string = '';
+        let marker: string = "";
         do {
             const listContainersResponse: ServiceListContainersSegmentResponse = await serviceURL.listContainersSegment(
                 Aborter.none,

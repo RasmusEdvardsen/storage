@@ -5,15 +5,15 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
-import { Component } from 'vue-property-decorator';
+import Vue from "vue";
+import { Component } from "vue-property-decorator";
 
 /* components */
-import HomeStorage from './homestorage/homeStorage.vue';
+import HomeStorage from "./homestorage/homeStorage.vue";
 
 @Component({
   components: {
-    'home-storage': HomeStorage,
+    "home-storage": HomeStorage,
   },
 })
 export default class App extends Vue {}

@@ -22,21 +22,21 @@ const namespace = "homeStorage";
 
 @Component({
   components: {
-    modal: Modal
-  }
+    modal: Modal,
+  },
 })
 export default class UploadFilesProgress extends Vue {
   @Action("uploadFile", { namespace })
-  uploadFile: any;
+  public uploadFile: any;
 
-  toggle: boolean = false;
+  public toggle: boolean = false;
 
-  numFiles: number = 0;
-  numFilesUploaded: number = 0;
-  currentFile: File = new File([], "");
-  currentFileProgress: number = 0;
+  public numFiles: number = 0;
+  public numFilesUploaded: number = 0;
+  public currentFile: File = new File([], "");
+  public currentFileProgress: number = 0;
 
-  clearAndClose() {
+  public clearAndClose() {
     this.toggle = false;
     this.numFiles = 0;
     this.numFilesUploaded = 0;
@@ -45,7 +45,7 @@ export default class UploadFilesProgress extends Vue {
 
   public async openAndShowProgress(
     fileList: FileList,
-    folderPath: string
+    folderPath: string,
   ): Promise<void> {
     const numFiles = fileList.length;
 
@@ -67,9 +67,9 @@ export default class UploadFilesProgress extends Vue {
         file,
         cb: (progress: TransferProgressEvent) => {
           this.currentFileProgress = Math.floor(
-            (progress.loadedBytes / file.size) * 100
+            (progress.loadedBytes / file.size) * 100,
           );
-        }
+        },
       });
       if (uploaded === 200 || uploaded === 201) {
         this.numFilesUploaded++;
