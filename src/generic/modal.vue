@@ -4,7 +4,7 @@
       <slot name="content"></slot>
     </div>
     <!-- should be 2 overlays - one colored, one not -->
-    <div :class="['overlay', t ? 'expanded' : '']" @click.stop="$emit('input', !t)"></div>
+    <div :class="['overlay', t ? 'expanded' : '']" @click.stop="overlayClicked()"></div>
   </div>
 </template>
 
@@ -17,11 +17,22 @@ export default class Modal extends Vue {
   @Prop({ type: Boolean, default: false })
   public toggle!: boolean;
 
+  @Prop({ type: Boolean, default: false })
+  public blocking!: boolean;
+
   public t: boolean = false;
 
   @Watch("toggle")
   public onToggleChanged(value: boolean) {
     this.t = value;
+  }
+
+  public overlayClicked() {
+    if (!this.blocking) {
+      this.$emit("input", !this.t);
+    } else {
+      return;
+    }
   }
 }
 </script>

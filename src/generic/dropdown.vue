@@ -39,7 +39,7 @@ export default class Dropdown extends Vue {
   z-index: 10;
   border-radius: 2px;
   border: 1px solid gainsboro;
-  
+
   -webkit-box-shadow: 2px 2px 4px 0px rgba(0, 0, 0, 0.5);
   -moz-box-shadow: 2px 2px 4px 0px rgba(0, 0, 0, 0.5);
   box-shadow: 2px 2px 4px 0px rgba(0, 0, 0, 0.5);
@@ -58,8 +58,8 @@ export default class Dropdown extends Vue {
   position: absolute;
   top: 0;
   left: 0;
-  height: 100vh;
-  width: 100vw;
+  height: 100%;
+  width: 100%;
   z-index: 9;
 }
 </style>

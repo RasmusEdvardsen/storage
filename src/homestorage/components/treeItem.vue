@@ -21,16 +21,16 @@
     </div>
     <ul v-show="isOpen" v-if="isFolder">
       <tree-item class="item" v-for="(child, index) in item.children" :key="index" :item="child"></tree-item>
-      <input
-        ref="input"
-        v-if="showInput"
-        v-model="folderName"
-        type="text"
-        @blur="showInput=false"
-        @keyup.enter="newFolderEntered()"
-        placeholder="Folder name"
-      >
     </ul>
+    <input
+      ref="input"
+      v-if="showInput"
+      v-model="folderName"
+      type="text"
+      @blur="showInput=false"
+      @keyup.enter="newFolderEntered()"
+      placeholder="Folder name"
+    >
   </li>
 </template>
 
@@ -46,7 +46,11 @@ import Dropdown from "@/generic/dropdown.vue";
 
 import { info, error } from "@/log/log";
 
-import { EventBus, Event as CustomEvents, IEventNewFiles } from "@/homestorage/eventBus.ts";
+import {
+  EventBus,
+  Event as CustomEvents,
+  IEventNewFiles,
+} from "@/homestorage/eventBus.ts";
 
 const namespace = "homeStorage";
 
@@ -79,7 +83,7 @@ export default class TreeItem extends Vue {
   public folderName: string = "";
 
   public $refs!: {
-    input: HTMLInputElement,
+    input: HTMLInputElement;
   };
 
   get isFolder(): boolean {
@@ -98,7 +102,9 @@ export default class TreeItem extends Vue {
   }
 
   get isActive() {
-    return this.activeBlob && this.activeBlob.name === this.item.fullPath ? "active" : "";
+    return this.activeBlob && this.activeBlob.name === this.item.fullPath
+      ? "active"
+      : "";
   }
 
   public contextMenuHandler(e: MouseEvent) {
@@ -141,16 +147,24 @@ export default class TreeItem extends Vue {
     await this.createFolder({ containerName: "homestorage", folderName });
     await this.getBlobsByContainer("homestorage");
     this.showInput = false;
+    this.folderName = "";
   }
 
   public async newFileSelected(e: Event): Promise<void> {
-    this.toggle = false, this.isOpen = true;
+    (this.toggle = false), (this.isOpen = true);
 
     const fileList = (e.target as HTMLInputElement).files;
-    if (!fileList || fileList.length < 1) { return; }
-    if (!this.item.fullPath) { return; }
+    if (!fileList || fileList.length < 1) {
+      return;
+    }
+    if (!this.item.fullPath) {
+      return;
+    }
 
-    const newFiles: IEventNewFiles = { fileList, folderPath: this.item.fullPath };
+    const newFiles: IEventNewFiles = {
+      fileList,
+      folderPath: this.item.fullPath,
+    };
     EventBus.$emit(CustomEvents.NEWFILES, newFiles);
 
     return;
@@ -190,5 +204,10 @@ export default class TreeItem extends Vue {
   left: 0;
   top: 0;
   opacity: 0;
+  width: 100%;
+  height: 100%;
+}
+.option:hover {
+  cursor: pointer;
 }
 </style>

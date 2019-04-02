@@ -1,10 +1,11 @@
 <template>
-  <modal class="upload-files-progress" :toggle="toggle" v-model="toggle">
+  <modal class="upload-files-progress" :toggle="toggle" v-model="toggle" :blocking="true">
     <div slot="content">
       <div class="num-file">Number of files to upload: {{numFiles}}</div>
       <div class="num-files-uploaded">Number of files uploaded: {{numFilesUploaded}}</div>
       <div class="current-file">Name of current file: {{currentFile.name}}</div>
       <div class="current-file-progress">Upload status: {{currentFileProgress}}%</div>
+      <button class="btn" :disabled="isUploading" @click="toggle=!toggle">Close</button>
     </div>
   </modal>
 </template>
@@ -31,6 +32,8 @@ export default class UploadFilesProgress extends Vue {
 
   public toggle: boolean = false;
 
+  public isUploading = false;
+
   public numFiles: number = 0;
   public numFilesUploaded: number = 0;
   public currentFile: File = new File([], "");
@@ -49,33 +52,38 @@ export default class UploadFilesProgress extends Vue {
   ): Promise<void> {
     const numFiles = fileList.length;
 
-    (this.toggle = true), (this.numFiles = numFiles);
-    for (let idx = 0; idx < fileList.length; idx++) {
-      const file = fileList.item(idx);
-      if (!file) {
-        return;
+    (this.toggle = true), (this.numFiles = numFiles), (this.isUploading = true);
+    try {
+      for (let idx = 0; idx < fileList.length; idx++) {
+        const file = fileList.item(idx);
+        if (!file) {
+          return;
+        }
+
+        const fileName =
+          folderPath.length > 0 ? folderPath + "/" + file.name : file.name;
+
+        this.currentFile = file;
+
+        const uploaded = await this.uploadFile({
+          containerName: "homestorage",
+          fileName,
+          file,
+          cb: (progress: TransferProgressEvent) => {
+            this.currentFileProgress = Math.floor(
+              (progress.loadedBytes / file.size) * 100,
+            );
+          },
+        });
+        if (uploaded === 200 || uploaded === 201) {
+          this.numFilesUploaded++;
+        }
       }
-
-      const fileName =
-        folderPath.length > 0 ? folderPath + "/" + file.name : file.name;
-
-      this.currentFile = file;
-
-      const uploaded = await this.uploadFile({
-        containerName: "homestorage",
-        fileName,
-        file,
-        cb: (progress: TransferProgressEvent) => {
-          this.currentFileProgress = Math.floor(
-            (progress.loadedBytes / file.size) * 100,
-          );
-        },
-      });
-      if (uploaded === 200 || uploaded === 201) {
-        this.numFilesUploaded++;
-      }
+      this.isUploading = false;
+      return;
+    } catch (error) {
+      return;
     }
-    return;
   }
 }
 </script>
