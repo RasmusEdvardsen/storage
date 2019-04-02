@@ -1,5 +1,5 @@
 <template>
-  <div id="to-be-preview-component" v-if="activeBlob && previewUrl.length > 0">
+  <div id="preview-wrapper" v-if="activeBlob && previewUrl.length > 0">
     <div class>{{name(activeBlob.name)}}</div>
     <div class="file-info">
       <div class="content-type">{{activeBlob.properties.contentType}}</div>
@@ -22,6 +22,7 @@ import { Action, Getter } from "vuex-class";
 
 import { BlobItem } from "@azure/storage-blob/typings/lib/generated/lib/models";
 import getSasToken from "@/azure/getSasToken";
+import downloadBlob from '@/azure/downloadBlob';
 
 import { name } from "../utils/arrUtils";
 
@@ -68,11 +69,31 @@ export default class PreviewWrapper extends Vue {
     }
   }
 
+  public async download(blob: BlobItem): Promise<void> {
+    if (!blob) {
+      return;
+    }
+
+    const token = await getSasToken();
+    if (typeof token !== "string") {
+      return;
+    }
+
+    downloadBlob(token, "homestorage", blob.name, this.name(blob.name));
+  }
+
   public name(str: string): string {
     return name(str);
   }
 }
 </script>
 
-<style>
+<style scoped>
+#preview-wrapper {
+  margin: 20px;
+}
+#preview-wrapper > .preview > * {
+  max-width: 100%;
+  max-height: 100%;
+}
 </style>

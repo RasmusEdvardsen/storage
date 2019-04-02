@@ -4,7 +4,6 @@
       <tree-item class="item" :item="tree"/>
     </ul>
     <div class="divider mt-10 mb-10"></div>
-    <!-- make into preview component -->
     <div id="preview">
       <preview-wrapper/>
     </div>
@@ -25,7 +24,7 @@ import PreviewWrapper from "./components/previewWrapper.vue";
 /* azure storage */
 import {
   ContainerItem,
-  BlobItem,
+  BlobItem
 } from "@azure/storage-blob/typings/lib/generated/lib/models";
 import { IBlobsByContainer } from "@/homestorage/module/homeStorageState";
 
@@ -46,8 +45,8 @@ const namespace = "homeStorage";
   components: {
     "tree-item": TreeItem,
     "upload-files-progress": UploadFilesProgress,
-    "preview-wrapper": PreviewWrapper,
-  },
+    "preview-wrapper": PreviewWrapper
+  }
 })
 export default class HomeStorage extends Vue {
   @Action("getContainers", { namespace })
@@ -81,19 +80,6 @@ export default class HomeStorage extends Vue {
     await this.getBlobsByContainer("homestorage");
   }
 
-  public async download(blob: BlobItem): Promise<void> {
-    if (!blob) {
-      return;
-    }
-
-    const token = await getSasToken();
-    if (typeof token !== "string") {
-      return;
-    }
-
-    downloadBlob(token, "homestorage", blob.name, this.name(blob.name));
-  }
-
   public name(str: string): string {
     return name(str);
   }
@@ -106,6 +92,7 @@ export default class HomeStorage extends Vue {
   position: relative;
   width: 1200px;
   margin: -2px 0 0 -2px;
+  overflow-x: auto;
 
   border-radius: 4px;
   border: 2px solid #5c768c;
@@ -114,43 +101,32 @@ export default class HomeStorage extends Vue {
   -moz-box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.5);
   box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.5);
 }
-#home-storage > #trees-wrapper,
-#home-storage > #to-be-preview-component {
+#trees-wrapper,
+#preview {
   width: calc(49%);
 }
 #trees-wrapper {
   overflow-x: auto;
   overflow-y: hidden;
 }
-
-#to-be-preview-component {
-  margin: 20px;
-}
-#to-be-preview-component > .preview > * {
-  max-width: 100%;
-  max-height: 100%;
-}
 .divider {
   border-left: 1px solid #5c768c;
   border-right: 1px solid #5c768c;
 }
 /*** media queries ***/
-/** duplicates **/
 @media screen and (max-device-width: 1080px) {
   #home-storage {
     width: inherit;
     display: block;
-    overflow-x: scroll;
   }
   #trees-wrapper {
     width: initial !important;
-    overflow-x: scroll;
   }
   #trees-wrapper * {
     width: max-content;
   }
   #preview {
-    width: calc(100%) !important;
+    width: 100%;
   }
   .divider {
     display: none;
