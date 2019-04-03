@@ -1,12 +1,12 @@
 using System;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
+using System.Text;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
-using Microsoft.Azure.WebJobs.Host;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 using Microsoft.WindowsAzure.Storage;
 using Newtonsoft.Json;
 
@@ -16,15 +16,13 @@ namespace home
     {
         [FunctionName("SasTokenGenerator")]
         public static async Task<HttpResponseMessage> Run(
-            [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)]
-            HttpRequestMessage req,
-            TraceWriter log
+            [HttpTrigger(AuthorizationLevel.Function, "get", Route = null)]
+            HttpRequest req,
+            ILogger log
         ) {
             var storageAccount = CloudStorageAccount.Parse(Environment.GetEnvironmentVariable("AzureWebJobsStorage"));
 
-            string queryPermissions = req.GetQueryNameValuePairs()
-                .FirstOrDefault(q => string.Compare(q.Key, "p", true) == 0)
-                .Value;
+            string queryPermissions = req.Query["p"];
 
             bool isSuccess = Enum.TryParse(queryPermissions.ToString(), true, out SharedAccessAccountPermissions permissions);
 

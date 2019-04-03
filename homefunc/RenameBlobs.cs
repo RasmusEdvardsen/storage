@@ -1,11 +1,11 @@
 using System;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
-using Microsoft.Azure.WebJobs.Host;
+using Microsoft.Extensions.Logging;
 using Microsoft.WindowsAzure.Storage.Auth;
 using Microsoft.WindowsAzure.Storage.Blob;
 
@@ -15,11 +15,11 @@ namespace home
     {
         [FunctionName("RenameBlobs")]
         public static async Task<HttpResponseMessage> Run(
-            [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)]
-            HttpRequestMessage req,
-            TraceWriter log
+            [HttpTrigger(AuthorizationLevel.Function, "post", Route = null)]
+            HttpRequest req,
+            ILogger log
         ) {
-            log.Info("C# HTTP trigger function processed a request.");
+            log.LogInformation("C# HTTP trigger function processed a request.");
 
             //  todo: get containername from body.
 
@@ -47,7 +47,7 @@ namespace home
                 return new HttpResponseMessage(HttpStatusCode.Accepted);
             } catch (Exception e)
             {
-                log.Error(e.Message);
+                log.LogError(e.Message);
                 return new HttpResponseMessage(HttpStatusCode.InternalServerError);
             }
 
