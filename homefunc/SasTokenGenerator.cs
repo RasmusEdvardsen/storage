@@ -16,7 +16,7 @@ namespace home
     {
         [FunctionName("SasTokenGenerator")]
         public static async Task<HttpResponseMessage> Run(
-            [HttpTrigger(AuthorizationLevel.Function, "get", Route = null)]
+            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = null)]
             HttpRequest req,
             ILogger log
         ) {
