@@ -6,7 +6,8 @@ import getSasToken from "@/azure/getSasToken";
 import getContainers from "@/azure/getContainers";
 import getBlobsByContainer from "@/azure/getBlobsByContainer";
 import createFolder from "@/azure/createFolder";
-import uploadFile, { uploadFileWithCallback } from "@/azure/uploadFile";
+import renameFile from "@/azure/renameFile"
+import { uploadFileWithCallback } from "@/azure/uploadFile";
 import { TransferProgressEvent } from "@azure/ms-rest-js";
 
 export const actions: ActionTree<HomeStorageState, RootState> = {
@@ -39,12 +40,12 @@ export const actions: ActionTree<HomeStorageState, RootState> = {
             return 500;
         }
     },
-    async createFolder(context, p: { containerName: string, folderName: string }): Promise<number> {
+    async createFolder(_, p: { containerName: string, folderName: string }): Promise<number> {
         try {
             const token: string | number = await getSasToken();
             if (typeof (token) === "number") { return token; }
 
-            createFolder(token, p.containerName, p.folderName);
+            await createFolder(token, p.containerName, p.folderName);
 
             return 200;
         } catch (error) {
@@ -66,6 +67,13 @@ export const actions: ActionTree<HomeStorageState, RootState> = {
             const isUploaded = await uploadFileWithCallback(token, p.containerName, p.fileName, p.file, p.cb);
 
             return isUploaded;
+        } catch (error) {
+            return 500;
+        }
+    },
+    async renameFile(_, p: { containerName: string, names: any[] }): Promise<number> {
+        try {
+            return await renameFile(p.containerName, p.names);
         } catch (error) {
             return 500;
         }

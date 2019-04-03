@@ -17,7 +17,7 @@ export async function getWithRetry(url: string): Promise<any> {
     return await new WebResult(500, "not implemented");
 }
 
-export async function post(url: string, payload: any): Promise<any> {
+export async function post<T>(url: string, payload: any): Promise<any> {
     try {
         const call = await fetch(url, {
             headers: {
@@ -26,13 +26,13 @@ export async function post(url: string, payload: any): Promise<any> {
             method: "post",
             body: JSON.stringify(payload),
         });
-        if (!call.ok) { return new WebResult(call.status, call.statusText); }
+        if (!call.ok) { return new WebResult(call.status, undefined, call.statusText); }
 
-        const json = await call.json();
+        const json = await call.json() as T;
 
-        return new WebResult(call.status, JSON.stringify(json));
+        return new WebResult<T>(call.status, json, call.statusText);
     } catch (error) {
-        return new WebResult(500, "Error occurred.");
+        return new WebResult<T>(500, undefined, error);
     }
 }
 

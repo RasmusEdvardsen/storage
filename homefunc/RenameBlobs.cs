@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -8,6 +10,7 @@ using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.WindowsAzure.Storage.Auth;
 using Microsoft.WindowsAzure.Storage.Blob;
+using Newtonsoft.Json;
 
 namespace home
 {
@@ -18,25 +21,27 @@ namespace home
             [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = null)]
             HttpRequest req,
             ILogger log
-        ) {
+        )
+        {
             log.LogInformation("C# HTTP trigger function processed a request.");
 
-            //  todo: get containername from body.
+            string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
+            RenameBlobDTO data = JsonConvert.DeserializeObject<RenameBlobDTO>(requestBody);
+            if (data.names.Count < 1) return new HttpResponseMessage(HttpStatusCode.BadRequest);
 
             var name = Environment.GetEnvironmentVariable("StorageAccountName");
             var key = Environment.GetEnvironmentVariable("StorageAccountKey");
             StorageCredentials cred = new StorageCredentials(name, key);
-            CloudBlobContainer container = new CloudBlobContainer(new Uri($"https://{name}.blob.core.windows.net/homestorage"), cred);
+            CloudBlobContainer container = new CloudBlobContainer(new Uri($"https://{name}.blob.core.windows.net/{data.containerName}"), cred);
 
-            string fileName = "rasmus_test/callback/pikachuu.jpg";
-            string newFileName = "rasmus_test/callback/pikachuuaaa.jpg";
+            string oldFileName = data.names[0].oldName;
+            string newFileName = data.names[0].newName;
             try
             {
-                //await container.CreateIfNotExistsAsync();
                 CloudBlockBlob blobCopy = container.GetBlockBlobReference(newFileName);
                 if (!await blobCopy.ExistsAsync())
                 {
-                    CloudBlockBlob blob = container.GetBlockBlobReference(fileName);
+                    CloudBlockBlob blob = container.GetBlockBlobReference(oldFileName);
 
                     if (await blob.ExistsAsync())
                     {
@@ -45,12 +50,24 @@ namespace home
                     }
                 }
                 return new HttpResponseMessage(HttpStatusCode.Accepted);
-            } catch (Exception e)
+            }
+            catch (Exception e)
             {
                 log.LogError(e.Message);
                 return new HttpResponseMessage(HttpStatusCode.InternalServerError);
             }
-
         }
+    }
+
+    public class RenameBlobDTO
+    {
+        public List<FileName> names { get; set; }
+        public string containerName { get; set; }
+    }
+
+    public class FileName
+    {
+        public string oldName { get; set; }
+        public string newName { get; set; }
     }
 }

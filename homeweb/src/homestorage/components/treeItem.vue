@@ -1,20 +1,31 @@
 <template>
   <li>
-    <div class="item mb-5" @click="itemClick(item)" @contextmenu="contextMenuHandler($event)">
+    <div class="item mb-5" @click="itemClick(item)" @contextmenu.prevent="toggle=true">
       <div :class="[icon, 'item-icon', 'mr-10', 'ml-10']"></div>
-      <div :class="['item-name', 'mr-10', 'ml-10', isActive]">{{ item.name }}</div>
+      <input
+        ref="fileNameInput"
+        v-if="showNewFileInput"
+        v-model="newFileName"
+        type="text"
+        @blur="showNewFileInput=false"
+        @keyup.enter="newFileNameEntered()"
+        placeholder="New file name"
+      >
+      <div :class="['item-name', 'mr-10', 'ml-10', isActive]" v-else>{{ item.name }}</div>
       <div
-        v-if="isFolder"
         :class="toggle ? 'far fa-minus-square' : 'far fa-plus-square'"
         @click.stop="toggle=!toggle"
       ></div>
       <dropdown :toggle="toggle" v-model="toggle">
-        <div slot="content">
+        <div slot="content" v-if="!isFolder">
+          <div class="option" @click.stop="rename(item)">Rename</div>
+        </div>
+        <div slot="content" v-else>
           <div class="option" @click.stop="newFolderOption">New folder</div>
           <div class="option" @click.stop>
             <div class="file-click">New file(s)</div>
             <!-- @change only fires when different file uploaded. -->
-            <input type="file" id="new-file" @change="newFileSelected($event)" multiple>
+            <input type="file" id="new-file" @change="newFilesSelected($event)" multiple>
           </div>
         </div>
       </dropdown>
@@ -23,11 +34,11 @@
       <tree-item class="item" v-for="(child, index) in item.children" :key="index" :item="child"></tree-item>
     </ul>
     <input
-      ref="input"
-      v-if="showInput"
+      ref="folderNameInput"
+      v-if="showFolderInput"
       v-model="folderName"
       type="text"
-      @blur="showInput=false"
+      @blur="showFolderInput=false"
       @keyup.enter="newFolderEntered()"
       placeholder="Folder name"
     >
@@ -44,12 +55,12 @@ import { BlobItem } from "@azure/storage-blob/typings/lib/generated/lib/models";
 
 import Dropdown from "@/generic/dropdown.vue";
 
-import { info, error } from "@/log/log";
+import * as log from "@/log/log";
 
 import {
   EventBus,
   Event as CustomEvents,
-  IEventNewFiles,
+  IEventNewFiles
 } from "@/homestorage/eventBus.ts";
 
 const namespace = "homeStorage";
@@ -57,8 +68,8 @@ const namespace = "homeStorage";
 @Component({
   name: "tree-item",
   components: {
-    dropdown: Dropdown,
-  },
+    dropdown: Dropdown
+  }
 })
 export default class TreeItem extends Vue {
   @Prop({ type: Object as () => {}, default: Object as () => {} })
@@ -73,17 +84,24 @@ export default class TreeItem extends Vue {
   @Action("createFolder", { namespace })
   public createFolder: any;
 
+  @Action("renameFile", { namespace })
+  public renameFile: any;
+
   @Getter("activeBlob", { namespace })
   public activeBlob!: BlobItem;
 
   public isOpen: boolean = false;
   public toggle: boolean = false;
-  public showInput: boolean = false;
+
+  public showFolderInput: boolean = false;
+  public showNewFileInput: boolean = false;
 
   public folderName: string = "";
+  public newFileName: string = "";
 
   public $refs!: {
-    input: HTMLInputElement;
+    folderNameInput: HTMLInputElement;
+    fileNameInput: HTMLInputElement;
   };
 
   get isFolder(): boolean {
@@ -107,15 +125,6 @@ export default class TreeItem extends Vue {
       : "";
   }
 
-  public contextMenuHandler(e: MouseEvent) {
-    if (!this.isFolder) {
-      return;
-    }
-
-    e.preventDefault();
-    this.toggle = true;
-  }
-
   public itemClick(item: any) {
     if (this.isFolder) {
       this.isOpen = !this.isOpen;
@@ -124,17 +133,41 @@ export default class TreeItem extends Vue {
     }
   }
 
-  public async newFolderOption() {
+  public async rename(item: any) {
     this.toggle = false;
-    this.isOpen = true;
-    this.showInput = true;
-    await this.$nextTick();
-    try {
-      const input: HTMLInputElement = this.$refs.input;
-      input.focus();
-    } catch (error) {
-      error(error);
+    this.showNewFileInput = true;
+    this.focusOnInput("fileNameInput");
+  }
+
+  public async newFileNameEntered() {
+    this.showNewFileInput = false;
+    if (this.newFileName.length < 1 && !this.item.fullPath) {
+      return;
     }
+    const fullPath: string = this.item.fullPath;
+    const path: string = fullPath.split("/").slice(0, -1).join("/");
+    const extensionArr = (this.item.name as string).split(".");
+    const extension = extensionArr[extensionArr.length - 1];
+    const fileName =
+      path.length > 0
+        ? path + "/" + this.newFileName + "." + extension
+        : this.newFileName + "." + extension;
+    const names = [
+      {
+        oldName: this.item.fullPath || this.item.name,
+        newName: fileName
+      }
+    ];
+    await this.renameFile({ containerName: "homestorage", names });
+    await this.getBlobsByContainer("homestorage");
+    this.showNewFileInput = false;
+    this.newFileName = "";
+  }
+
+  public async newFolderOption() {
+    this.closeContextMenuAndOpenFolder();
+    this.showFolderInput = true;
+    this.focusOnInput("folderNameInput");
   }
 
   public async newFolderEntered() {
@@ -146,12 +179,12 @@ export default class TreeItem extends Vue {
       fullPath.length > 0 ? fullPath + "/" + this.folderName : this.folderName;
     await this.createFolder({ containerName: "homestorage", folderName });
     await this.getBlobsByContainer("homestorage");
-    this.showInput = false;
+    this.showFolderInput = false;
     this.folderName = "";
   }
 
-  public async newFileSelected(e: Event): Promise<void> {
-    (this.toggle = false), (this.isOpen = true);
+  public async newFilesSelected(e: Event): Promise<void> {
+    this.closeContextMenuAndOpenFolder();
 
     const fileList = (e.target as HTMLInputElement).files;
     if (!fileList || fileList.length < 1) {
@@ -163,11 +196,28 @@ export default class TreeItem extends Vue {
 
     const newFiles: IEventNewFiles = {
       fileList,
-      folderPath: this.item.fullPath,
+      folderPath: this.item.fullPath
     };
     EventBus.$emit(CustomEvents.NEWFILES, newFiles);
 
     return;
+  }
+
+  async focusOnInput(ref: string) {
+    await this.$nextTick();
+    try {
+      let keyVal = Object.entries(this.$refs).find(x => x[0] === ref);
+      if (!keyVal) return;
+      const input: HTMLInputElement = keyVal[1];
+      input.focus();
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  public closeContextMenuAndOpenFolder() {
+    this.toggle = false;
+    this.isOpen = true;
   }
 }
 </script>

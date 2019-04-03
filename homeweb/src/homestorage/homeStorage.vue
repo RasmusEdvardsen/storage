@@ -108,6 +108,7 @@ export default class HomeStorage extends Vue {
 #trees-wrapper {
   overflow-x: auto;
   overflow-y: hidden;
+  margin-bottom: 85px;
 }
 .divider {
   border-left: 1px solid #5c768c;
