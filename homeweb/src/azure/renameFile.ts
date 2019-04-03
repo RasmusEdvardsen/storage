@@ -1,4 +1,4 @@
-import { post } from '@/web/web';
+import { post } from "@/web/web";
 
 export default async function renameFile(containerName: string, names: any[]): Promise<number> {
     try {

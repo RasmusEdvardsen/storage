@@ -60,7 +60,7 @@ import * as log from "@/log/log";
 import {
   EventBus,
   Event as CustomEvents,
-  IEventNewFiles
+  IEventNewFiles,
 } from "@/homestorage/eventBus.ts";
 
 const namespace = "homeStorage";
@@ -68,8 +68,8 @@ const namespace = "homeStorage";
 @Component({
   name: "tree-item",
   components: {
-    dropdown: Dropdown
-  }
+    dropdown: Dropdown,
+  },
 })
 export default class TreeItem extends Vue {
   @Prop({ type: Object as () => {}, default: Object as () => {} })
@@ -155,8 +155,8 @@ export default class TreeItem extends Vue {
     const names = [
       {
         oldName: this.item.fullPath || this.item.name,
-        newName: fileName
-      }
+        newName: fileName,
+      },
     ];
     await this.renameFile({ containerName: "homestorage", names });
     await this.getBlobsByContainer("homestorage");
@@ -196,22 +196,22 @@ export default class TreeItem extends Vue {
 
     const newFiles: IEventNewFiles = {
       fileList,
-      folderPath: this.item.fullPath
+      folderPath: this.item.fullPath,
     };
     EventBus.$emit(CustomEvents.NEWFILES, newFiles);
 
     return;
   }
 
-  async focusOnInput(ref: string) {
+  public async focusOnInput(ref: string) {
     await this.$nextTick();
     try {
-      let keyVal = Object.entries(this.$refs).find(x => x[0] === ref);
-      if (!keyVal) return;
+      const keyVal = Object.entries(this.$refs).find((x) => x[0] === ref);
+      if (!keyVal) { return; }
       const input: HTMLInputElement = keyVal[1];
       input.focus();
     } catch (error) {
-      console.log(error);
+      return;
     }
   }
 

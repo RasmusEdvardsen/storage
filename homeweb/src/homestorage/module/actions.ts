@@ -6,7 +6,7 @@ import getSasToken from "@/azure/getSasToken";
 import getContainers from "@/azure/getContainers";
 import getBlobsByContainer from "@/azure/getBlobsByContainer";
 import createFolder from "@/azure/createFolder";
-import renameFile from "@/azure/renameFile"
+import renameFile from "@/azure/renameFile";
 import { uploadFileWithCallback } from "@/azure/uploadFile";
 import { TransferProgressEvent } from "@azure/ms-rest-js";
 
