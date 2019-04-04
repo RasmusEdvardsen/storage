@@ -1,5 +1,18 @@
 <template>
   <div id="home-storage">
+    <modal class="login" :toggle="toggle" v-model="toggle" :blocking="true">
+      <div slot="content">
+        <div class="ui">
+          <label for="username">Username:</label>
+          <input type="text" id="username" v-model="username">
+        </div>
+        <div class="pi">
+          <label for="password">Password: </label>
+          <input type="text" id="password" v-model="password">
+        </div>
+        <button @click="login">Login</button>
+      </div>
+    </modal>
     <ul id="trees-wrapper">
       <tree-item class="item" :item="tree"/>
     </ul>
@@ -20,6 +33,7 @@ import { Action, Getter } from "vuex-class";
 import TreeItem from "./components/treeItem.vue";
 import UploadFilesProgress from "./components/uploadFilesProgress.vue";
 import PreviewWrapper from "./components/previewWrapper.vue";
+import Modal from "@/generic/modal.vue";
 
 /* azure storage */
 import {
@@ -46,6 +60,7 @@ const namespace = "homeStorage";
     "tree-item": TreeItem,
     "upload-files-progress": UploadFilesProgress,
     "preview-wrapper": PreviewWrapper,
+    "modal": Modal,
   },
 })
 export default class HomeStorage extends Vue {
@@ -64,18 +79,30 @@ export default class HomeStorage extends Vue {
   @Getter("blobByName", { namespace })
   public blobByName!: any;
 
-  public $refs!: {
-    ufp: UploadFilesProgress;
-  };
+  public toggle: boolean = false;
 
-  public async mounted() {
-    await this.getContainers();
-    await this.getBlobsByContainer("homestorage");
-    EventBus.$on(Event.NEWFILES, this.openUploadFilesProgress);
+  public username: string = "";
+  public password: string = "";
+
+  public mounted() {
+    this.toggle = true;
+  }
+
+  public async login() {
+    if (
+      (this.username === "ana" || this.username === "rae")
+        && this.password === "231190"
+    ) {
+      this.toggle = false;
+      await this.getContainers();
+      await this.getBlobsByContainer("homestorage");
+      EventBus.$on(Event.NEWFILES, this.openUploadFilesProgress);
+    }
+
   }
 
   public async openUploadFilesProgress(newFiles: IEventNewFiles) {
-    const ufp: UploadFilesProgress = this.$refs.ufp;
+    const ufp: UploadFilesProgress = this.$refs.ufp as UploadFilesProgress;
     await ufp.openAndShowProgress(newFiles.fileList, newFiles.folderPath);
     await this.getBlobsByContainer("homestorage");
   }
@@ -90,6 +117,7 @@ export default class HomeStorage extends Vue {
 #home-storage {
   display: flex;
   position: relative;
+  min-height: 200px;
   width: 1200px;
   margin: -2px 0 0 -2px;
   overflow-x: auto;
