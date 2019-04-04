@@ -117,7 +117,7 @@ export default class HomeStorage extends Vue {
 #home-storage {
   display: flex;
   position: relative;
-  min-height: 200px;
+  min-height: 300px;
   width: 1200px;
   margin: -2px 0 0 -2px;
   overflow-x: auto;
@@ -139,8 +139,7 @@ export default class HomeStorage extends Vue {
   margin-bottom: 85px;
 }
 .divider {
-  border-left: 1px solid #5c768c;
-  border-right: 1px solid #5c768c;
+  border: 1px solid #5c768c;
 }
 /*** media queries ***/
 @media screen and (max-device-width: 1080px) {
@@ -158,7 +157,7 @@ export default class HomeStorage extends Vue {
     width: 100%;
   }
   .divider {
-    display: none;
+    margin: unset;
   }
 }
 </style>

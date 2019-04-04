@@ -13,6 +13,9 @@
       <div v-else class="empty"></div>
     </div>
   </div>
+  <div class="no-file-selected" v-else>
+    <div class="text">no file selected</div>
+  </div>
 </template>
 
 <script lang="ts">
@@ -95,5 +98,16 @@ export default class PreviewWrapper extends Vue {
 #preview-wrapper > .preview > * {
   max-width: 100%;
   max-height: 100%;
+}
+.no-file-selected {
+  height: calc(100% - 40px);
+
+  margin: 20px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  background: lightgrey;
 }
 </style>
