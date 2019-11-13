@@ -39,7 +39,7 @@ import Modal from "@/generic/modal.vue";
 import {
   ContainerItem,
   BlobItem,
-} from "@azure/storage-blob/typings/lib/generated/lib/models";
+} from "@azure/storage-blob/typings/src/generated/src/models";
 import { IBlobsByContainer } from "@/homestorage/module/homeStorageState";
 
 /* tree */

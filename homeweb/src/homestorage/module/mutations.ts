@@ -1,7 +1,7 @@
 import { MutationTree } from "vuex";
 import HomeStorageState, { IBlobsByContainer } from "./homeStorageState";
 
-import { ContainerItem } from "@azure/storage-blob/typings/lib/generated/lib/models";
+import { ContainerItem } from "@azure/storage-blob/typings/src/generated/src/models";
 
 import { pathStringsToTreeStructure } from "../utils/treeUtils";
 

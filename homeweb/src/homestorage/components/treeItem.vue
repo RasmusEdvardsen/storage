@@ -51,7 +51,7 @@ import { Component, Prop, Watch } from "vue-property-decorator";
 
 import { Action, Getter } from "vuex-class";
 
-import { BlobItem } from "@azure/storage-blob/typings/lib/generated/lib/models";
+import { BlobItem } from "@azure/storage-blob/typings/src/generated/src/models";
 
 import Dropdown from "@/generic/dropdown.vue";
 
