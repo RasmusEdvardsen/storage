@@ -61,15 +61,12 @@ export default class PreviewWrapper extends Vue {
     if (this.activeBlob === null || !this.activeBlob.properties.contentType) {
       return "";
     }
-    switch (this.activeBlob.properties.contentType) {
-      case "image/jpeg":
-        return "image";
-      case "video/quicktime":
-      case "video/mp4":
-        return "video";
-      default:
-        return "";
-    }
+    let type: string = this.activeBlob.properties.contentType;
+    if (type.includes("image"))
+      return "image";
+    if (type.includes("video"))
+      return "video";
+    else return "";
   }
 
   public async download(blob: BlobItem): Promise<void> {
