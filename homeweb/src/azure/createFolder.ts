@@ -3,20 +3,18 @@ import {
     BlockBlobURL,
     Aborter,
     ContainerURL,
-    AnonymousCredential,
     StorageURL,
     ServiceURL,
+    TokenCredential,
 } from "@azure/storage-blob";
+import { user } from '@/auth/user';
 
-export default async function createFolder(
-    token: string,
-    containerName: string,
-    folderName: string,
-): Promise<number> {
-    const anonymousCredential = new AnonymousCredential();
-    const pipeline = StorageURL.newPipeline(anonymousCredential);
+export default async function createFolder(containerName: string, folderName: string, ): Promise<number> {
+    const tokenCredential = new TokenCredential(await user.accessToken());
+    const pipeline = StorageURL.newPipeline(tokenCredential);
+
     const serviceURL = new ServiceURL(
-        `https://storageanarae.blob.core.windows.net${token}`,
+        `https://storageanarae.blob.core.windows.net`,
         pipeline,
     );
 

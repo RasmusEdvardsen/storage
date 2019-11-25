@@ -36,14 +36,11 @@ import {
   BlobItem
 } from "@azure/storage-blob/typings/src/generated/src/models";
 import { IBlobsByContainer } from "@/homestorage/module/homeStorageState";
+import downloadBlob from "@/azure/downloadBlob";
 
 /* tree */
 import { pathStringsToTreeStructure, findInTree } from "./utils/treeUtils";
 import { name } from "./utils/arrUtils";
-
-/* sas */
-import getSasToken from "@/azure/getSasToken";
-import downloadBlob from "@/azure/downloadBlob";
 
 /* events */
 import { EventBus, Event, IEventNewFiles } from "@/homestorage/eventBus.ts";

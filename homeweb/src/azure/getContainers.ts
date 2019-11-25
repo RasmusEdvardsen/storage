@@ -1,21 +1,23 @@
 import {
-    AnonymousCredential,
     StorageURL,
     ServiceURL,
     Aborter,
+    TokenCredential,
 } from "@azure/storage-blob";
 import {
     ServiceListContainersSegmentResponse,
     ContainerItem,
 } from "@azure/storage-blob/typings/src/generated/src/models";
 
-export default async function getContainers(token: string): Promise<ContainerItem[]> {
+import { user } from '../auth/user';
+
+export default async function getContainers(): Promise<ContainerItem[]> {
     try {
-        const anonymousCredential = new AnonymousCredential();
-        const pipeline = StorageURL.newPipeline(anonymousCredential);
+        const tokenCredential = new TokenCredential(await user.accessToken());
+        const pipeline = StorageURL.newPipeline(tokenCredential);
 
         const serviceURL = new ServiceURL(
-            `https://storageanarae.blob.core.windows.net${token}`,
+            `https://storageanarae.blob.core.windows.net`,
             pipeline,
         );
 

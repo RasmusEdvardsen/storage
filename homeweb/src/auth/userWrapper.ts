@@ -9,7 +9,7 @@ export default class UserWrapper {
         this.userAgentApplication = new UserAgentApplication(config);
     }
 
-    init() {
+    init(): void {
         this.userAgentApplication = new UserAgentApplication(config);
     }
 
@@ -22,25 +22,27 @@ export default class UserWrapper {
             return this.userAgentApplication.getAccount();
     }
 
-    logout() {
+    logout(): void {
         this.userAgentApplication.logout();
     }
 
-    loginPopup(callback?: () => void) {
+    loginPopup(callback?: () => void): void {
         this.userAgentApplication
             .loginPopup(authParams)
             .then(_ => {
                 this.userAgentApplication.acquireTokenSilent(authParams)
-                    .then(tokenResponse => {
-                        console.log(tokenResponse);
-                        if (callback) callback();
-                    })
-                    .catch(error => {
-                        console.log(error)
-                    });
+                    .then(_ => {if (callback) callback();})
+                    .catch(error => console.log(error));
             })
-            .catch(function (error) {
-                console.log(error);
-            });
+            .catch(err => console.log(err));
+    }
+
+    async accessToken(): Promise<string> {
+        try {
+            let tmp = await this.userAgentApplication.acquireTokenSilent(authParams)
+            return tmp.accessToken;
+        } catch (error) {
+            return "";
+        }
     }
 }

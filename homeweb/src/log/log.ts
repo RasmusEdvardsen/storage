@@ -3,22 +3,22 @@ import {
     BlockBlobURL,
     Aborter,
     ContainerURL,
-    AnonymousCredential,
     StorageURL,
     ServiceURL,
+    TokenCredential,
 } from "@azure/storage-blob";
-import getSasToken from "@/azure/getSasToken";
+import { user } from '@/auth/user';
 
 async function toStorage(
-    token: string,
     containerName: string,
     fileName: string,
     log: string,
 ): Promise<number> {
-    const anonymousCredential = new AnonymousCredential();
-    const pipeline = StorageURL.newPipeline(anonymousCredential);
+    const tokenCredential = new TokenCredential(await user.accessToken());
+    const pipeline = StorageURL.newPipeline(tokenCredential);
+
     const serviceURL = new ServiceURL(
-        `https://storageanarae.blob.core.windows.net${token}`,
+        `https://storageanarae.blob.core.windows.net`,
         pipeline,
     );
 
@@ -35,21 +35,15 @@ async function toStorage(
     return uploadBlobResponse._response.status;
 }
 export async function info(i: string): Promise<void> {
-    const token: string | number = await getSasToken();
-    if (typeof (token) === "number") { return; }
-
     const date = new Date();
     const dateFormatted = formatDateForLog(date);
-    toStorage(token, "log", "info/" + dateFormatted, i);
+    toStorage("log", "info/" + dateFormatted, i);
 }
 
 export async function error(err: string): Promise<void> {
-    const token: string | number = await getSasToken();
-    if (typeof (token) === "number") { return; }
-
     const date = new Date();
     const dateFormatted = formatDateForLog(date);
-    toStorage(token, "log", "error/" + dateFormatted, err);
+    toStorage("log", "error/" + dateFormatted, err);
 }
 
 /**

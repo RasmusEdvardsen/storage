@@ -74,12 +74,7 @@ export default class PreviewWrapper extends Vue {
       return;
     }
 
-    const token = await getSasToken();
-    if (typeof token !== "string") {
-      return;
-    }
-
-    downloadBlob(token, "homestorage", blob.name, this.name(blob.name));
+    downloadBlob("homestorage", blob.name, this.name(blob.name));
   }
 
   public name(str: string): string {

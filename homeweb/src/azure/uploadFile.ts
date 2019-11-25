@@ -6,9 +6,11 @@ import {
     AnonymousCredential,
     StorageURL,
     ServiceURL,
+    TokenCredential,
 } from "@azure/storage-blob";
 import { error } from "@/log/log";
 import { TransferProgressEvent } from "@azure/ms-rest-js";
+import { user } from '@/auth/user';
 
 export default async function uploadFile(
     token: string,
@@ -40,17 +42,17 @@ export default async function uploadFile(
 }
 
 export async function uploadFileWithCallback(
-    token: string,
     containerName: string,
     fileName: string,
     file: File,
     cb: (e: TransferProgressEvent) => void,
 ): Promise<number> {
     try {
-        const anonymousCredential = new AnonymousCredential();
-        const pipeline = StorageURL.newPipeline(anonymousCredential);
+        const tokenCredential = new TokenCredential(await user.accessToken());
+        const pipeline = StorageURL.newPipeline(tokenCredential);
+
         const serviceURL = new ServiceURL(
-            `https://storageanarae.blob.core.windows.net${token}`,
+            `https://storageanarae.blob.core.windows.net`,
             pipeline,
         );
         const containerURL = ContainerURL.fromServiceURL(serviceURL, containerName);

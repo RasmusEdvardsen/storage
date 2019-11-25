@@ -1,24 +1,25 @@
 import {
     BlobURL,
     Aborter,
-    AnonymousCredential,
     StorageURL,
     ServiceURL,
     ContainerURL,
+    TokenCredential,
 } from "@azure/storage-blob";
 
 import FileSaver from "file-saver";
+import { user } from '@/auth/user';
 
 export default async function downloadBlob(
-    token: string,
     containerName: string,
     blobNameFull: string,
     blobName: string,
 ) {
-    const anonymousCredential = new AnonymousCredential();
-    const pipeline = StorageURL.newPipeline(anonymousCredential);
+    const tokenCredential = new TokenCredential(await user.accessToken());
+    const pipeline = StorageURL.newPipeline(tokenCredential);
+
     const serviceURL = new ServiceURL(
-        `https://storageanarae.blob.core.windows.net${token}`,
+        `https://storageanarae.blob.core.windows.net`,
         pipeline,
     );
 
