@@ -1,26 +1,21 @@
 <template>
-  <div id="home-storage">
-    <modal class="login" :toggle="toggle" v-model="toggle" :blocking="true">
-      <div slot="content">
-        <div class="ui">
-          <label for="username">Username:</label>
-          <input type="text" id="username" v-model="username">
+  <div id="home-storage-wrapper">
+    <div class="logout" @click="logout" v-if="isLoggedIn()">logout</div>
+    <div id="home-storage">
+      <modal class="login" :toggle="toggle" v-model="toggle" :blocking="true">
+        <div slot="content">
+          <button @click="login">Login with microsoft account</button>
         </div>
-        <div class="pi">
-          <label for="password">Password: </label>
-          <input type="text" id="password" v-model="password">
-        </div>
-        <button @click="login">Login</button>
+      </modal>
+      <ul id="trees-wrapper">
+        <tree-item class="item" :item="tree" />
+      </ul>
+      <div class="divider mt-10 mb-10"></div>
+      <div id="preview">
+        <preview-wrapper />
       </div>
-    </modal>
-    <ul id="trees-wrapper">
-      <tree-item class="item" :item="tree"/>
-    </ul>
-    <div class="divider mt-10 mb-10"></div>
-    <div id="preview">
-      <preview-wrapper/>
+      <upload-files-progress ref="ufp" />
     </div>
-    <upload-files-progress ref="ufp"/>
   </div>
 </template>
 
@@ -38,7 +33,7 @@ import Modal from "@/generic/modal.vue";
 /* azure storage */
 import {
   ContainerItem,
-  BlobItem,
+  BlobItem
 } from "@azure/storage-blob/typings/src/generated/src/models";
 import { IBlobsByContainer } from "@/homestorage/module/homeStorageState";
 
@@ -53,6 +48,9 @@ import downloadBlob from "@/azure/downloadBlob";
 /* events */
 import { EventBus, Event, IEventNewFiles } from "@/homestorage/eventBus.ts";
 
+/* auth */
+import { user } from "../auth/user";
+
 const namespace = "homeStorage";
 
 @Component({
@@ -60,8 +58,8 @@ const namespace = "homeStorage";
     "tree-item": TreeItem,
     "upload-files-progress": UploadFilesProgress,
     "preview-wrapper": PreviewWrapper,
-    "modal": Modal,
-  },
+    modal: Modal
+  }
 })
 export default class HomeStorage extends Vue {
   @Action("getContainers", { namespace })
@@ -81,24 +79,28 @@ export default class HomeStorage extends Vue {
 
   public toggle: boolean = false;
 
-  public username: string = "";
-  public password: string = "";
-
   public mounted() {
-    this.toggle = true;
+    if (user.isLoggedIn()) this.loginSuccess();
+    else this.toggle = true;
   }
 
   public async login() {
-    if (
-      (this.username === "ana" || this.username === "rae")
-        && this.password === "231190"
-    ) {
-      this.toggle = false;
-      await this.getContainers();
-      await this.getBlobsByContainer("homestorage");
-      EventBus.$on(Event.NEWFILES, this.openUploadFilesProgress);
-    }
+    user.loginPopup(this.loginSuccess);
+  }
 
+  public async logout() {
+    user.logout();
+  }
+
+  public isLoggedIn(): boolean {
+    return user.isLoggedIn();
+  }
+
+  public async loginSuccess() {
+    this.toggle = false;
+    await this.getContainers();
+    await this.getBlobsByContainer("homestorage");
+    EventBus.$on(Event.NEWFILES, this.openUploadFilesProgress);
   }
 
   public async openUploadFilesProgress(newFiles: IEventNewFiles) {
