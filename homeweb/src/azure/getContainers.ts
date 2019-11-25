@@ -9,7 +9,7 @@ import {
     ContainerItem,
 } from "@azure/storage-blob/typings/src/generated/src/models";
 
-import { user } from '../auth/user';
+import { user } from "../auth/user";
 
 export default async function getContainers(): Promise<ContainerItem[]> {
     try {

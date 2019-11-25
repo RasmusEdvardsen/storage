@@ -7,9 +7,9 @@
     </div>
     <div class="preview" v-if="showPreview">
       <video v-if="activeBlobFileType === 'video'" width="100%" height="100%" controls>
-        <source :src="previewUrl">
+        <source :src="previewUrl" />
       </video>
-      <img v-else-if="activeBlobFileType === 'image'" id="viewurl" :src="previewUrl" alt>
+      <img v-else-if="activeBlobFileType === 'image'" id="viewurl" :src="previewUrl" alt />
       <div v-else class="empty"></div>
     </div>
   </div>
@@ -23,7 +23,7 @@ import Vue from "vue";
 import { Component, Watch } from "vue-property-decorator";
 import { Action, Getter } from "vuex-class";
 
-import { BlobItem } from "@azure/storage-blob/typings/src/generated/src/models";//src/generated/src/models";
+import { BlobItem } from "@azure/storage-blob/typings/src/generated/src/models"; // src/generated/src/models";
 import getSasToken from "@/azure/getSasToken";
 import downloadBlob from "@/azure/downloadBlob";
 
@@ -61,12 +61,15 @@ export default class PreviewWrapper extends Vue {
     if (this.activeBlob === null || !this.activeBlob.properties.contentType) {
       return "";
     }
-    let type: string = this.activeBlob.properties.contentType;
-    if (type.includes("image"))
+    const type: string = this.activeBlob.properties.contentType;
+    if (type.includes("image")) {
       return "image";
-    if (type.includes("video"))
+    }
+    if (type.includes("video")) {
       return "video";
-    else return "";
+    } else {
+      return "";
+    }
   }
 
   public async download(blob: BlobItem): Promise<void> {

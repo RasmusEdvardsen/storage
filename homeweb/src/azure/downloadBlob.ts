@@ -8,7 +8,7 @@ import {
 } from "@azure/storage-blob";
 
 import FileSaver from "file-saver";
-import { user } from '@/auth/user';
+import { user } from "@/auth/user";
 
 export default async function downloadBlob(
     containerName: string,

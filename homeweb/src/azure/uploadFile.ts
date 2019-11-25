@@ -10,7 +10,7 @@ import {
 } from "@azure/storage-blob";
 import { error } from "@/log/log";
 import { TransferProgressEvent } from "@azure/ms-rest-js";
-import { user } from '@/auth/user';
+import { user } from "@/auth/user";
 
 export default async function uploadFile(
     token: string,

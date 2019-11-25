@@ -7,9 +7,9 @@ import {
     ServiceURL,
     TokenCredential,
 } from "@azure/storage-blob";
-import { user } from '@/auth/user';
+import { user } from "@/auth/user";
 
-export default async function createFolder(containerName: string, folderName: string, ): Promise<number> {
+export default async function createFolder(containerName: string, folderName: string ): Promise<number> {
     const tokenCredential = new TokenCredential(await user.accessToken());
     const pipeline = StorageURL.newPipeline(tokenCredential);
 

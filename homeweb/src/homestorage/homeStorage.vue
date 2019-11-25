@@ -31,10 +31,7 @@ import PreviewWrapper from "./components/previewWrapper.vue";
 import Modal from "@/generic/modal.vue";
 
 /* azure storage */
-import {
-  ContainerItem,
-  BlobItem
-} from "@azure/storage-blob/typings/src/generated/src/models";
+import { ContainerItem, BlobItem } from "@azure/storage-blob/typings/src/generated/src/models";
 import { IBlobsByContainer } from "@/homestorage/module/homeStorageState";
 import downloadBlob from "@/azure/downloadBlob";
 
@@ -55,8 +52,8 @@ const namespace = "homeStorage";
     "tree-item": TreeItem,
     "upload-files-progress": UploadFilesProgress,
     "preview-wrapper": PreviewWrapper,
-    modal: Modal
-  }
+    "modal": Modal,
+  },
 })
 export default class HomeStorage extends Vue {
   @Action("getContainers", { namespace })
@@ -77,8 +74,11 @@ export default class HomeStorage extends Vue {
   public toggle: boolean = false;
 
   public mounted() {
-    if (user.isLoggedIn()) this.loginSuccess();
-    else this.toggle = true;
+    if (user.isLoggedIn()) {
+      this.loginSuccess();
+    } else {
+      this.toggle = true;
+    }
   }
 
   public async login() {

@@ -7,7 +7,7 @@ import {
     ServiceURL,
     TokenCredential,
 } from "@azure/storage-blob";
-import { user } from '@/auth/user';
+import { user } from "@/auth/user";
 
 async function toStorage(
     containerName: string,

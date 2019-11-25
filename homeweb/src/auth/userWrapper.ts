@@ -1,45 +1,47 @@
-import { UserAgentApplication } from 'msal';
-import { authParams } from './authParams';
-import { config } from './config';
+import { UserAgentApplication } from "msal";
+import { authParams } from "./authParams";
+import { config } from "./config";
+import { error } from "@/log/log";
 
 export default class UserWrapper {
-    userAgentApplication: UserAgentApplication;
+    public userAgentApplication: UserAgentApplication;
 
     constructor() {
         this.userAgentApplication = new UserAgentApplication(config);
     }
 
-    init(): void {
+    public init(): void {
         this.userAgentApplication = new UserAgentApplication(config);
     }
 
-    isLoggedIn(): boolean {
+    public isLoggedIn(): boolean {
         return !!this.userAgentApplication.getAccount();
     }
 
-    account() {
-        if (this.isLoggedIn())
+    public account() {
+        if (this.isLoggedIn()) {
             return this.userAgentApplication.getAccount();
+        }
     }
 
-    logout(): void {
+    public logout(): void {
         this.userAgentApplication.logout();
     }
 
-    loginPopup(callback?: () => void): void {
+    public loginPopup(callback?: () => void): void {
         this.userAgentApplication
             .loginPopup(authParams)
-            .then(_ => {
+            .then((_) => {
                 this.userAgentApplication.acquireTokenSilent(authParams)
-                    .then(_ => {if (callback) callback();})
-                    .catch(error => console.log(error));
+                    .then((__) => {if (callback) { callback(); }})
+                    .catch((err) => error(err));
             })
-            .catch(err => console.log(err));
+            .catch((e) => error(e));
     }
 
-    async accessToken(): Promise<string> {
+    public async accessToken(): Promise<string> {
         try {
-            let tmp = await this.userAgentApplication.acquireTokenSilent(authParams)
+            const tmp = await this.userAgentApplication.acquireTokenSilent(authParams);
             return tmp.accessToken;
         } catch (error) {
             return "";

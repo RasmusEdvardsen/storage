@@ -1,3 +1,3 @@
-import UserWrapper from './userWrapper';
+import UserWrapper from "./userWrapper";
 
 export const user = new UserWrapper();
