@@ -5,7 +5,7 @@ import {
     ContainerURL,
     ServiceURL,
 } from "@azure/storage-blob";
-import getServiceUrl from '@/azure/serviceUrl';
+import getServiceUrl from "@/azure/serviceUrl";
 
 async function toStorage(
     containerName: string,

@@ -24,10 +24,12 @@ import { Component, Watch } from "vue-property-decorator";
 import { Action, Getter } from "vuex-class";
 
 import { BlobItem } from "@azure/storage-blob/typings/src/generated/src/models"; // src/generated/src/models";
-import getSasToken from "@/azure/getSasToken";
 import downloadBlob from "@/azure/downloadBlob";
 
 import { name } from "../utils/arrUtils";
+import { post } from "../../web/web";
+
+import {user} from "../../auth/user";
 
 const namespace = "homeStorage";
 @Component
@@ -52,8 +54,18 @@ export default class PreviewWrapper extends Vue {
     const blobStorageUrl =
       "https://storageanarae.blob.core.windows.net/homestorage";
     const namePath = "/" + value.name;
-    const token = await getSasToken();
-    this.previewUrl = blobStorageUrl + namePath + token;
+
+    const xhr = new XMLHttpRequest();
+    xhr.responseType = "blob"; // so you can access the response like a normal URL
+    xhr.onreadystatechange = () => {
+        if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+          this.previewUrl = URL.createObjectURL(xhr.response);
+        }
+    };
+    xhr.open("GET", blobStorageUrl + namePath, true);
+    xhr.setRequestHeader("Authorization", "Bearer " + await user.accessToken());
+    xhr.setRequestHeader("x-ms-version", "2019-02-02");
+    xhr.send();
   }
 
   // put into util file
