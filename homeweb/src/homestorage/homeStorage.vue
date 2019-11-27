@@ -34,8 +34,7 @@ import Modal from "@/generic/modal.vue";
 import { ContainerItem, BlobItem } from "@azure/storage-blob/typings/src/generated/src/models";
 import { IBlobsByContainer } from "@/homestorage/module/homeStorageState";
 
-/* tree */
-import { pathStringsToTreeStructure, findInTree } from "./utils/treeUtils";
+/* utils */
 import { name } from "./utils/arrUtils";
 
 /* events */
