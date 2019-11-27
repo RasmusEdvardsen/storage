@@ -12,7 +12,7 @@ export default async function downloadBlob(
     containerName: string,
     blobNameFull: string,
     blobName: string,
-    saveFile: boolean
+    saveFile: boolean,
 ): Promise<Blob | void> {
     const serviceURL: ServiceURL = await getServiceUrl();
 
@@ -20,9 +20,9 @@ export default async function downloadBlob(
     const blobURL = BlobURL.fromContainerURL(containerURL, blobNameFull);
     const downloadBlockBlobResponse = await blobURL.download(Aborter.none, 0);
     const blobBody = await downloadBlockBlobResponse.blobBody;
-    if (blobBody)
-        if (saveFile)    
-            { FileSaver.saveAs(blobBody, blobName); }
-        else
+    if (blobBody) {
+        if (saveFile) { FileSaver.saveAs(blobBody, blobName); } else {
             return blobBody;
+        }
+    }
 }

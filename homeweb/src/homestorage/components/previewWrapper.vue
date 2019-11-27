@@ -29,7 +29,7 @@ import downloadBlob from "@/azure/downloadBlob";
 import { name } from "../utils/arrUtils";
 import { post } from "../../web/web";
 
-import {user} from "../../auth/user";
+import { user } from "../../auth/user";
 
 const namespace = "homeStorage";
 @Component
@@ -56,10 +56,19 @@ export default class PreviewWrapper extends Vue {
       "https://storageanarae.blob.core.windows.net/homestorage";
     const namePath = "/" + value.name;
 
-    let blob: Blob | void = await downloadBlob("homestorage", value.name, this.name(value.name), false);
-    if (!blob) return;
-    
-    this.previewUrl = URL.createObjectURL(blob);
+    const src = blobStorageUrl + namePath;
+    const options = {
+      headers: {
+        "authorization": "Bearer " + (await user.accessToken()),
+        "x-ms-version": "2019-02-02",
+      },
+    };
+
+    fetch(src, options)
+      .then((res) => res.blob())
+      .then((blob) => {
+        this.previewUrl = URL.createObjectURL(blob);
+      });
   }
 
   // put into util file
