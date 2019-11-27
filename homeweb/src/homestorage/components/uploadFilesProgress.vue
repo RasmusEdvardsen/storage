@@ -5,7 +5,7 @@
       <div class="num-files-uploaded">Number of files uploaded: {{numFilesUploaded}}</div>
       <div class="current-file">Name of current file: {{currentFile.name}}</div>
       <div class="current-file-progress">Upload status: {{currentFileProgress}}%</div>
-      <button class="btn" :disabled="isUploading" @click="toggle=!toggle">Close</button>
+      <button class="btn" :disabled="isUploading" @click="clearAndClose">Close</button>
     </div>
   </modal>
 </template>
