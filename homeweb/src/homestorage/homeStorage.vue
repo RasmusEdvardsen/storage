@@ -33,7 +33,6 @@ import Modal from "@/generic/modal.vue";
 /* azure storage */
 import { ContainerItem, BlobItem } from "@azure/storage-blob/typings/src/generated/src/models";
 import { IBlobsByContainer } from "@/homestorage/module/homeStorageState";
-import downloadBlob from "@/azure/downloadBlob";
 
 /* tree */
 import { pathStringsToTreeStructure, findInTree } from "./utils/treeUtils";

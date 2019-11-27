@@ -42,8 +42,9 @@ export default class PreviewWrapper extends Vue {
 
   @Watch("activeBlob", { deep: true })
   public async onActiveBlobChanged(value: BlobItem | null) {
+    this.previewUrl = "";
+
     if (value === null) {
-      this.previewUrl = "";
       return;
     }
 
@@ -55,17 +56,10 @@ export default class PreviewWrapper extends Vue {
       "https://storageanarae.blob.core.windows.net/homestorage";
     const namePath = "/" + value.name;
 
-    const xhr = new XMLHttpRequest();
-    xhr.responseType = "blob"; // so you can access the response like a normal URL
-    xhr.onreadystatechange = () => {
-        if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
-          this.previewUrl = URL.createObjectURL(xhr.response);
-        }
-    };
-    xhr.open("GET", blobStorageUrl + namePath, true);
-    xhr.setRequestHeader("Authorization", "Bearer " + await user.accessToken());
-    xhr.setRequestHeader("x-ms-version", "2019-02-02");
-    xhr.send();
+    let blob: Blob | void = await downloadBlob("homestorage", value.name, this.name(value.name), false);
+    if (!blob) return;
+    
+    this.previewUrl = URL.createObjectURL(blob);
   }
 
   // put into util file
@@ -89,7 +83,7 @@ export default class PreviewWrapper extends Vue {
       return;
     }
 
-    downloadBlob("homestorage", blob.name, this.name(blob.name));
+    downloadBlob("homestorage", blob.name, this.name(blob.name), true);
   }
 
   public name(str: string): string {
