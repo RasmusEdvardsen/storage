@@ -1,5 +1,5 @@
-import { ServiceURL, ContainerURL, BlobURL, Aborter } from '@azure/storage-blob';
-import getServiceUrl from './serviceUrl';
+import { ServiceURL, ContainerURL, BlobURL, Aborter } from "@azure/storage-blob";
+import getServiceUrl from "./serviceUrl";
 
 export default async function copyBlob(containerName: string, oldName: string, newName: string): Promise<number> {
     try {

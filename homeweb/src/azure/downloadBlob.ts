@@ -6,7 +6,7 @@ import {
 } from "@azure/storage-blob";
 
 import FileSaver from "file-saver";
-import getServiceUrl from './serviceUrl';
+import getServiceUrl from "./serviceUrl";
 
 export default async function downloadBlob(
     containerName: string,

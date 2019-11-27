@@ -7,7 +7,7 @@ import {
     BlobItem,
     ContainerListBlobFlatSegmentResponse,
 } from "@azure/storage-blob/typings/src/generated/src/models";
-import getServiceUrl from './serviceUrl';
+import getServiceUrl from "./serviceUrl";
 
 export default async function getBlobsByContainer(containerName: string): Promise<BlobItem[]> {
     const blobItems: BlobItem[] = [];

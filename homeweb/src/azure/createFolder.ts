@@ -5,7 +5,7 @@ import {
     ContainerURL,
     ServiceURL,
 } from "@azure/storage-blob";
-import getServiceUrl from './serviceUrl';
+import getServiceUrl from "./serviceUrl";
 
 export default async function createFolder(containerName: string, folderName: string ): Promise<number> {
     const serviceURL: ServiceURL = await getServiceUrl();

@@ -60,7 +60,7 @@ import * as log from "@/log/log";
 import {
   EventBus,
   Event as CustomEvents,
-  IEventNewFiles
+  IEventNewFiles,
 } from "@/homestorage/eventBus.ts";
 
 const namespace = "homeStorage";
@@ -68,8 +68,8 @@ const namespace = "homeStorage";
 @Component({
   name: "tree-item",
   components: {
-    dropdown: Dropdown
-  }
+    dropdown: Dropdown,
+  },
 })
 export default class TreeItem extends Vue {
   @Prop() public item!: any;
@@ -144,8 +144,8 @@ export default class TreeItem extends Vue {
       path.length > 0
         ? path + "/" + this.newFileName + "." + extension
         : this.newFileName + "." + extension;
-    let oldName = this.item.fullPath || this.item.name;
-    let newName = fileName;
+    const oldName = this.item.fullPath || this.item.name;
+    const newName = fileName;
     await this.renameFile({ containerName: "homestorage", oldName, newName });
     await this.getBlobsByContainer("homestorage");
     this.showNewFileInput = false;
@@ -184,7 +184,7 @@ export default class TreeItem extends Vue {
 
     const newFiles: IEventNewFiles = {
       fileList,
-      folderPath: this.item.fullPath
+      folderPath: this.item.fullPath,
     };
     EventBus.$emit(CustomEvents.NEWFILES, newFiles);
 
@@ -194,7 +194,7 @@ export default class TreeItem extends Vue {
   public async focusOnInput(ref: string) {
     await this.$nextTick();
     try {
-      const keyVal = Object.entries(this.$refs).find(x => x[0] === ref);
+      const keyVal = Object.entries(this.$refs).find((x) => x[0] === ref);
       if (!keyVal) {
         return;
       }

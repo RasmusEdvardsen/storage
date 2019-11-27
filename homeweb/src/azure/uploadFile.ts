@@ -7,7 +7,7 @@ import {
 } from "@azure/storage-blob";
 import { error } from "@/log/log";
 import { TransferProgressEvent } from "@azure/ms-rest-js";
-import getServiceUrl from './serviceUrl';
+import getServiceUrl from "./serviceUrl";
 
 export async function uploadFileWithCallback(
     containerName: string,

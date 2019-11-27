@@ -1,5 +1,5 @@
-import { ServiceURL, TokenCredential, StorageURL } from '@azure/storage-blob';
-import { user } from '@/auth/user';
+import { ServiceURL, TokenCredential, StorageURL } from "@azure/storage-blob";
+import { user } from "@/auth/user";
 
 export default async function getServiceUrl(): Promise<ServiceURL> {
     const tokenCredential = new TokenCredential(await user.accessToken());

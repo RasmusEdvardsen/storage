@@ -7,7 +7,7 @@ import {
     ContainerItem,
 } from "@azure/storage-blob/typings/src/generated/src/models";
 
-import getServiceUrl from './serviceUrl';
+import getServiceUrl from "./serviceUrl";
 
 export default async function getContainers(): Promise<ContainerItem[]> {
     try {

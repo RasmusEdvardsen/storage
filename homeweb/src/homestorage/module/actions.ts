@@ -7,8 +7,8 @@ import getBlobsByContainer from "@/azure/getBlobsByContainer";
 import createFolder from "@/azure/createFolder";
 import { uploadFileWithCallback } from "@/azure/uploadFile";
 import { TransferProgressEvent } from "@azure/ms-rest-js";
-import copyBlob from '@/azure/copyBlob';
-import deleteBlob from '@/azure/deleteBlob';
+import copyBlob from "@/azure/copyBlob";
+import deleteBlob from "@/azure/deleteBlob";
 
 export const actions: ActionTree<HomeStorageState, RootState> = {
     async getContainers({ commit }): Promise<number> {
