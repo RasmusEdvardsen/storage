@@ -25,7 +25,11 @@ export default class UserWrapper {
     }
 
     public logout(): void {
-        this.userAgentApplication.logout();
+        // this.userAgentApplication.logout();
+        // window[config.cache!.cacheLocation!].clear();
+        window.localStorage.clear();
+        window.location.assign("https://login.microsoftonline.com/common/oauth2/logout?" +
+            "post_logout_redirect_uri=" + config.auth.redirectUri);
     }
 
     public loginPopup(callback?: () => void): void {
