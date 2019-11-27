@@ -10,7 +10,7 @@
         @blur="showNewFileInput=false"
         @keyup.enter="newFileNameEntered()"
         placeholder="New file name"
-      >
+      />
       <div :class="['item-name', 'mr-10', 'ml-10', isActive]" v-else>{{ item.name }}</div>
       <div
         :class="toggle ? 'far fa-minus-square' : 'far fa-plus-square'"
@@ -25,7 +25,7 @@
           <div class="option" @click.stop>
             <div class="file-click">New file(s)</div>
             <!-- @change only fires when different file uploaded. -->
-            <input type="file" id="new-file" @change="newFilesSelected($event)" multiple>
+            <input type="file" id="new-file" @change="newFilesSelected($event)" multiple />
           </div>
         </div>
       </dropdown>
@@ -41,7 +41,7 @@
       @blur="showFolderInput=false"
       @keyup.enter="newFolderEntered()"
       placeholder="Folder name"
-    >
+    />
   </li>
 </template>
 
@@ -60,7 +60,7 @@ import * as log from "@/log/log";
 import {
   EventBus,
   Event as CustomEvents,
-  IEventNewFiles,
+  IEventNewFiles
 } from "@/homestorage/eventBus.ts";
 
 const namespace = "homeStorage";
@@ -68,27 +68,16 @@ const namespace = "homeStorage";
 @Component({
   name: "tree-item",
   components: {
-    dropdown: Dropdown,
-  },
+    dropdown: Dropdown
+  }
 })
 export default class TreeItem extends Vue {
-  @Prop({ type: Object as () => {}, default: Object as () => {} })
-  public item!: any;
-
-  @Action("setActiveBlob", { namespace })
-  public setActiveBlob: any;
-
-  @Action("getBlobsByContainer", { namespace })
-  public getBlobsByContainer: any;
-
-  @Action("createFolder", { namespace })
-  public createFolder: any;
-
-  @Action("renameFile", { namespace })
-  public renameFile: any;
-
-  @Getter("activeBlob", { namespace })
-  public activeBlob!: BlobItem;
+  @Prop() public item!: any;
+  @Action("setActiveBlob", { namespace }) public setActiveBlob: any;
+  @Action("getBlobsByContainer", { namespace }) public getBlobsByContainer: any;
+  @Action("createFolder", { namespace }) public createFolder: any;
+  @Action("renameFile", { namespace }) public renameFile: any;
+  @Getter("activeBlob", { namespace }) public activeBlob!: BlobItem;
 
   public isOpen: boolean = false;
   public toggle: boolean = false;
@@ -145,20 +134,19 @@ export default class TreeItem extends Vue {
       return;
     }
     const fullPath: string = this.item.fullPath;
-    const path: string = fullPath.split("/").slice(0, -1).join("/");
+    const path: string = fullPath
+      .split("/")
+      .slice(0, -1)
+      .join("/");
     const extensionArr = (this.item.name as string).split(".");
     const extension = extensionArr[extensionArr.length - 1];
     const fileName =
       path.length > 0
         ? path + "/" + this.newFileName + "." + extension
         : this.newFileName + "." + extension;
-    const names = [
-      {
-        oldName: this.item.fullPath || this.item.name,
-        newName: fileName,
-      },
-    ];
-    await this.renameFile({ containerName: "homestorage", names });
+    let oldName = this.item.fullPath || this.item.name;
+    let newName = fileName;
+    await this.renameFile({ containerName: "homestorage", oldName, newName });
     await this.getBlobsByContainer("homestorage");
     this.showNewFileInput = false;
     this.newFileName = "";
@@ -196,7 +184,7 @@ export default class TreeItem extends Vue {
 
     const newFiles: IEventNewFiles = {
       fileList,
-      folderPath: this.item.fullPath,
+      folderPath: this.item.fullPath
     };
     EventBus.$emit(CustomEvents.NEWFILES, newFiles);
 
@@ -206,8 +194,10 @@ export default class TreeItem extends Vue {
   public async focusOnInput(ref: string) {
     await this.$nextTick();
     try {
-      const keyVal = Object.entries(this.$refs).find((x) => x[0] === ref);
-      if (!keyVal) { return; }
+      const keyVal = Object.entries(this.$refs).find(x => x[0] === ref);
+      if (!keyVal) {
+        return;
+      }
       const input: HTMLInputElement = keyVal[1];
       input.focus();
     } catch (error) {

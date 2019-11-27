@@ -1,25 +1,17 @@
 import {
-    StorageURL,
     ServiceURL,
     Aborter,
-    TokenCredential,
 } from "@azure/storage-blob";
 import {
     ServiceListContainersSegmentResponse,
     ContainerItem,
 } from "@azure/storage-blob/typings/src/generated/src/models";
 
-import { user } from "../auth/user";
+import getServiceUrl from './serviceUrl';
 
 export default async function getContainers(): Promise<ContainerItem[]> {
     try {
-        const tokenCredential = new TokenCredential(await user.accessToken());
-        const pipeline = StorageURL.newPipeline(tokenCredential);
-
-        const serviceURL = new ServiceURL(
-            `https://storageanarae.blob.core.windows.net`,
-            pipeline,
-        );
+        const serviceURL: ServiceURL = await getServiceUrl();
 
         const containers: ContainerItem[] = [];
         let marker: string | undefined = "";
