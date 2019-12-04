@@ -1,6 +1,6 @@
 <template>
   <li>
-    <div class="item mb-5" @click="itemClick(item)" @contextmenu.prevent="toggle=true">
+    <div class="item mb-5" v-if="item.name !== 'dummy.txt'" @click="itemClick(item)" @contextmenu.prevent="toggle=true">
       <div :class="[icon, 'item-icon', 'mr-10', 'ml-10']"></div>
       <input
         ref="fileNameInput"
@@ -19,6 +19,7 @@
       <dropdown :toggle="toggle" v-model="toggle">
         <div slot="content" v-if="!isFolder">
           <div class="option" @click.stop="rename(item)">Rename</div>
+          <div class="option" @click.stop="del(item)">Delete</div>
         </div>
         <div slot="content" v-else>
           <div class="option" @click.stop="newFolderOption">New folder</div>
@@ -77,6 +78,7 @@ export default class TreeItem extends Vue {
   @Action("getBlobsByContainer", { namespace }) public getBlobsByContainer: any;
   @Action("createFolder", { namespace }) public createFolder: any;
   @Action("renameFile", { namespace }) public renameFile: any;
+  @Action("deleteFile", { namespace }) public deleteFile: any;
   @Getter("activeBlob", { namespace }) public activeBlob!: BlobItem;
 
   public isOpen: boolean = false;
@@ -126,6 +128,14 @@ export default class TreeItem extends Vue {
     this.toggle = false;
     this.showNewFileInput = true;
     this.focusOnInput("fileNameInput");
+  }
+
+  public async del(item: any) {
+    this.toggle = false;
+    if (confirm(`Really delete ${item.name}?`)) {
+      await this.deleteFile({ containerName: "homestorage", name: item.fullPath });
+      await this.getBlobsByContainer("homestorage");
+    }
   }
 
   public async newFileNameEntered() {

@@ -59,10 +59,18 @@ export const actions: ActionTree<HomeStorageState, RootState> = {
             return 500;
         }
     },
-    async renameFile(_, p: { containerName: string, oldName: any, newName: string }): Promise<number> {
+    async renameFile(_, p: { containerName: string, oldName: string, newName: string }): Promise<number> {
         try {
             await copyBlob(p.containerName, p.oldName, p.newName);
             await deleteBlob(p.containerName, p.oldName);
+            return 200;
+        } catch (error) {
+            return 500;
+        }
+    },
+    async deleteFile(_, p: { containerName: string, name: string }): Promise<number> {
+        try {
+            await deleteBlob(p.containerName, p.name);
             return 200;
         } catch (error) {
             return 500;
